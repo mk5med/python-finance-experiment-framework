@@ -1,0 +1,13 @@
+yfinance
+regex
+bs4
+pytest
+plotly
+pandas
+black
+pandas_datareader
+numpy
+html5lib
+psycopg2
+mypy
+sqlalchemy
