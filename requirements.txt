@@ -11,3 +11,6 @@ html5lib
 psycopg2
 mypy
 sqlalchemy
+sqlalchemy[mypy]
+pandas-stubs
+types-psycopg2
