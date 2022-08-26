@@ -12,7 +12,7 @@ lastAction = 0
 def simulate(stopCallback, simulationState: SimulationState, tickers):
     global cash
     global lastAction
-    price = simulationState.getTickerPrice("TRL.TO")
+    price = simulationState.getTickerPrice(tickers[0])
 
     # Skip this entry
     # Cases:
@@ -40,7 +40,9 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
             return
         # Buy
         cost = portfolio.buy((adjustedPrice, ableToBuy))
-        print(f"{simulationState.currentDate}: Buying {ableToBuy} for ${adjustedPrice * ableToBuy} @ {adjustedPrice}")
+        print(
+            f"{simulationState.currentDate}: Buying {ableToBuy} for ${adjustedPrice * ableToBuy} @ {adjustedPrice}"
+        )
         cash -= cost
         lastAction = -1
     else:
@@ -63,7 +65,10 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         cost = portfolio.sell(transaction, shareGroups)
         cash += cost
 
-        print(f"{simulationState.currentDate}: Sold at ${adjustedPrice}. Current cash", "${:,.2f}".format(cash))
+        print(
+            f"{simulationState.currentDate}: Sold at ${adjustedPrice}. Current cash",
+            "${:,.2f}".format(cash),
+        )
         lastAction = 1
 
 

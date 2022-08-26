@@ -58,7 +58,7 @@ if __name__ == "__main__":
     ticker = yf.Ticker("BTC-CAD")
     # ticker = yf.Ticker("BITF.TO")
     # ticker = yf.Ticker("ME.TO")
-    ticker = yf.Ticker("WBE.V")
+    # ticker = yf.Ticker("WBE.V")
 
     CUR_PRICE = ticker.history(period="1d")["Close"][0]
 
@@ -68,5 +68,5 @@ if __name__ == "__main__":
     print(f"Price needed to break even: ${sg.priceForReturn(0)}")
     print(f"Price needed to earn $1: ${sg.priceForReturn(1)}")
     print(f"Price needed to earn $10: ${sg.priceForReturn(10)}")
-
-    print_futureReturns(sg, CUR_PRICE, CUR_PRICE * 2.01, 1000)
+    
+    print_futureReturns(sg, CUR_PRICE, CUR_PRICE * 0.1, 1000)

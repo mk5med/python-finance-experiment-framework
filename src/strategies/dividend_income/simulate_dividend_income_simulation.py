@@ -5,10 +5,11 @@ from extra.ThreadPool import ThreadPool
 from simulation import SimulationState, AssetSimulation
 import queue
 
-taskQueue = queue.Queue()
-resultQueue = queue.Queue()
-failedTaskQueue = queue.Queue()
+taskQueue: queue.Queue = queue.Queue()
+resultQueue: queue.Queue = queue.Queue()
+failedTaskQueue: queue.Queue = queue.Queue()
 pool = ThreadPool(5, taskQueue, failedTaskQueue, print)
+
 
 def findBestAsset():
     ...
@@ -37,7 +38,6 @@ def simulate(
     for ticker in tickers[:5]:
         taskQueue.put((simulationState.getTickerPrice, [ticker]))
 
-    
     taskQueue.join()
     # stopSimulation()
     ...

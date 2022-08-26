@@ -1,9 +1,10 @@
+from sys import argv
 import yfinance as yf
 import json
 
 if __name__ == "__main__":
     tickers = None
-    with open("../tickers.txt") as tickerINode:
+    with open(argv[1]) as tickerINode:
         tickers = json.load(tickerINode)
 
     tickersLen = len(tickers)

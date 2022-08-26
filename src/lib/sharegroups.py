@@ -2,10 +2,12 @@ from lib.simpletransactions import SimpleTransactionChain
 import math
 import typing
 
+TransactionTypeDef = typing.NewType("TransactionTypeDef", typing.Tuple[float, float])
+TransactionListTypeDef = typing.NewType("TransactionListTypeDef", typing.List[TransactionTypeDef])
 
 class ShareGroups(SimpleTransactionChain):
     @staticmethod
-    def fromSimpleChain(transactions):
+    def fromSimpleChain(transactions: TransactionListTypeDef):
         """
         Converts a simple transaction chain to a share group transaction chain.
         >>> transactions = [(1,1), (4,1)]
@@ -65,7 +67,7 @@ class ShareGroups(SimpleTransactionChain):
         return shareGroups
 
     @staticmethod
-    def fromShareGroupChain(transactions):
+    def fromShareGroupChain(transactions: TransactionListTypeDef):
         shareGroups = ShareGroups()
         for transaction in transactions:
             if transaction[0] == "buy":
@@ -82,7 +84,7 @@ class ShareGroups(SimpleTransactionChain):
             typing.Tuple[str, typing.Tuple[float, float]]
         ] = []
 
-    def buy(self, transaction: tuple):
+    def buy(self, transaction: TransactionTypeDef):
         """
         Register a buy order for the asset. Transaction is a tuple containing (Price, Quantity)
         >>> ShareGroups().buy((1,1))
@@ -90,7 +92,7 @@ class ShareGroups(SimpleTransactionChain):
         (price, qty) = transaction
         assert price >= 0
         assert qty > 0
-
+        
         # Create the price group if it does not exist
         if price not in self.groups:
             self.groups[price] = 0

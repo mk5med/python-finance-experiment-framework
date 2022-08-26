@@ -1,19 +1,17 @@
-from io import TextIOWrapper
-from typing import List, Tuple
+import sqlite3
+from typing import List
 import typing
-import json
-import pandas as pd
 from simulation.SimulationState import SimulationState
 
 
 class AssetSimulation:
-    def __init__(self, db, startTime, tickers=None, historicalDataINode=None):
+    def __init__(self, db: sqlite3.Connection, startTime, tickers=None, historicalDataINode=None):
         # Load all historical data for the tickers
         # To be memory efficient this should be loaded into a database that is optimised for searching by date
         self.actionCallback = None
         if historicalDataINode is not None:
-            raise "Deprecated: Parsing a json file is outside of the scope for the simulator"
-            self.tickers = json.load(historicalDataINode)
+            raise Exception("Deprecated: Parsing a json file is outside of the scope for the simulator")
+            
         elif tickers is not None:
             self.tickers = tickers
         else:

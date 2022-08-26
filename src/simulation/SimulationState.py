@@ -12,8 +12,8 @@ class SimulationState:
         datestr = str(self.currentDate.date())
         cursor = None
         try:
-            cursor = self.dbCon.cursor()
-            res = cursor.execute(f"select * from \"{ticker}\" where Date = '{datestr}'")
+            cursor = self.dbCon
+            res = cursor.execute(f"select * from \"{ticker}\" where \"Date\" = '{datestr}'")
 
             # index, date, open, high, low, close, adj close, volume
             return res.fetchone()
