@@ -8,3 +8,6 @@
 historical_data/
 raw/
 **/*.sqlite3
+
+# Data
+tickers.txt
