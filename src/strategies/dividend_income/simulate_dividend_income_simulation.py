@@ -2,12 +2,13 @@ import typing
 import pandas as pd
 import yfinance as yf
 from extra.ThreadPool import ThreadPool
+from extra.threadTypes import TaskType
 from simulation import SimulationState, AssetSimulation
 import queue
 
-taskQueue: queue.Queue = queue.Queue()
+taskQueue = typing.cast(TaskType, queue.Queue())
 resultQueue: queue.Queue = queue.Queue()
-failedTaskQueue: queue.Queue = queue.Queue()
+failedTaskQueue = typing.cast(TaskType, queue.Queue())
 pool = ThreadPool(5, taskQueue, failedTaskQueue, print)
 
 

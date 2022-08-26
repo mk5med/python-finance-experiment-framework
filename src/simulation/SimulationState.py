@@ -13,7 +13,9 @@ class SimulationState:
         cursor = None
         try:
             cursor = self.dbCon
-            res = cursor.execute(f"select * from \"{ticker}\" where \"Date\" = '{datestr}'")
+            res = cursor.execute(
+                f'select * from "{ticker}" where "Date" = \'{datestr}\''
+            )
 
             # index, date, open, high, low, close, adj close, volume
             return res.fetchone()

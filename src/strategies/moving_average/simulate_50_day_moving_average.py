@@ -27,10 +27,9 @@ def start(db):
     tickers = None
     with open("../tickers.txt") as f:
         tickers = json.load(f)
-    
+
     with ThreadPoolExecutor(10) as executor:
         result = executor.map(partial(_start, db), tickers)
-
 
     for i in result:
         print(i)

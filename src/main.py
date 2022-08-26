@@ -68,5 +68,5 @@ if __name__ == "__main__":
     print(f"Price needed to break even: ${sg.priceForReturn(0)}")
     print(f"Price needed to earn $1: ${sg.priceForReturn(1)}")
     print(f"Price needed to earn $10: ${sg.priceForReturn(10)}")
-    
+
     print_futureReturns(sg, CUR_PRICE, CUR_PRICE * 0.1, 1000)

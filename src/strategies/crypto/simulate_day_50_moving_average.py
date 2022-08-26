@@ -22,7 +22,7 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         return
 
     (index, date, openPrice, high, low, closePrice, adjClose, volume) = price
-    adjustedPrice = (openPrice + closePrice) / 2
+    adjustedPrice: float = (openPrice + closePrice) / 2
     historicalAveragePrice = movingAverage.average()
 
     movingAverage.addData(adjustedPrice)
@@ -35,7 +35,7 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         if lastAction == -1:
             return
 
-        ableToBuy = cash / adjustedPrice
+        ableToBuy: float = cash / adjustedPrice
         if ableToBuy == 0:
             return
         # Buy

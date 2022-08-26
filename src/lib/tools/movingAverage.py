@@ -1,9 +1,12 @@
+from typing import List
+
+
 class MovingAverage:
     def __init__(self, maxLength: int):
-        self.values = []
+        self.values: List[float] = []
         self.maxLength = maxLength
 
-    def addData(self, data):
+    def addData(self, data: float):
         if len(self.values) == self.maxLength:
             self.values.pop(0)
 

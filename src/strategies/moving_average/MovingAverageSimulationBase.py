@@ -15,9 +15,9 @@ class MovingAverageSimulationBase:
         self.timeStart = datetime.now()
 
     def simulate(self, stopCallback, simulationState: SimulationState, tickers: list):
-        
+
         price = simulationState.getTickerPrice(tickers[0])
-        
+
         # Skip this entry
         # Cases:
         # - No more data
@@ -26,10 +26,10 @@ class MovingAverageSimulationBase:
             return
 
         (index, date, openPrice, high, low, closePrice, adjClose, volume) = price
-        if ((datetime.now() - self.timeStart).seconds // 60 >= 1):
+        if (datetime.now() - self.timeStart).seconds // 60 >= 1:
             self.timeStart = datetime.now()
             print(tickers, date)
-        
+
         adjustedPrice = (openPrice + closePrice) / 2
         historicalAveragePrice = self.movingAverage.average()
 

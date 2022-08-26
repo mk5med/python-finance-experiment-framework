@@ -3,15 +3,23 @@ from typing import List
 import typing
 from simulation.SimulationState import SimulationState
 
+ActionCallbackTypeDef = typing.Callable[
+    [typing.Callable[[], None], SimulationState, List[str]], None
+]
+
 
 class AssetSimulation:
-    def __init__(self, db: sqlite3.Connection, startTime, tickers=None, historicalDataINode=None):
+    def __init__(
+        self, db: sqlite3.Connection, startTime, tickers=None, historicalDataINode=None
+    ):
         # Load all historical data for the tickers
         # To be memory efficient this should be loaded into a database that is optimised for searching by date
-        self.actionCallback = None
+        self.actionCallback: typing.Union[ActionCallbackTypeDef, None] = None
         if historicalDataINode is not None:
-            raise Exception("Deprecated: Parsing a json file is outside of the scope for the simulator")
-            
+            raise Exception(
+                "Deprecated: Parsing a json file is outside of the scope for the simulator"
+            )
+
         elif tickers is not None:
             self.tickers = tickers
         else:
@@ -21,9 +29,7 @@ class AssetSimulation:
 
     def setAction(
         self,
-        actionCallback: typing.Callable[
-            [typing.Callable[[], None], SimulationState, List[str]], None
-        ],
+        actionCallback: ActionCallbackTypeDef,
     ):
         self.actionCallback = actionCallback
 

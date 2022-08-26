@@ -1,7 +1,7 @@
 import json
 from pydoc import classname
 from bs4 import BeautifulSoup
-import regex
+import re
 
 ignoreKeys = ["Withdrawal", "Funds transferred in", "Funds transferred out", "Deposit"]
 
@@ -13,7 +13,7 @@ def getTicker(elem):
 def getTransactionDetails(elem):
     if elem.find(attrs={"data-qa": "wstrade-info-item-Quantity"}) == None:
         return [None, elem.find(class_="sc-ihNHHr gqesxw").text]
-    match = regex.match(
+    match = re.match(
         "^(\d+\.?\d*) shares? x \$([\d,]+\.\d+)",
         elem.find(attrs={"data-qa": "wstrade-info-item-Quantity"}).text,
     )
