@@ -1,9 +1,7 @@
 from lib.simpletransactions import SimpleTransactionChain
 import math
 import typing
-
-TransactionTypeDef = typing.NewType("TransactionTypeDef", typing.Tuple[float, float])
-TransactionListTypeDef = typing.NewType("TransactionListTypeDef", typing.List[TransactionTypeDef])
+from lib.typedefs import TransactionListTypeDef, TransactionTypeDef, ShareGroupChainTypeDef
 
 class ShareGroups(SimpleTransactionChain):
     @staticmethod
@@ -67,7 +65,7 @@ class ShareGroups(SimpleTransactionChain):
         return shareGroups
 
     @staticmethod
-    def fromShareGroupChain(transactions: TransactionListTypeDef):
+    def fromShareGroupChain(transactions: ShareGroupChainTypeDef):
         shareGroups = ShareGroups()
         for transaction in transactions:
             if transaction[0] == "buy":
@@ -80,9 +78,7 @@ class ShareGroups(SimpleTransactionChain):
     def __init__(self):
         super().__init__()
         self.groups: typing.Dict[float, float] = {}
-        self.shareGroupTransactionChain: typing.List[
-            typing.Tuple[str, typing.Tuple[float, float]]
-        ] = []
+        self.shareGroupTransactionChain: ShareGroupChainTypeDef = []
 
     def buy(self, transaction: TransactionTypeDef):
         """
@@ -92,7 +88,7 @@ class ShareGroups(SimpleTransactionChain):
         (price, qty) = transaction
         assert price >= 0
         assert qty > 0
-        
+
         # Create the price group if it does not exist
         if price not in self.groups:
             self.groups[price] = 0
@@ -110,7 +106,7 @@ class ShareGroups(SimpleTransactionChain):
         )
         return price * qty
 
-    def sell(self, transaction: tuple, breakDown: list):
+    def sell(self, transaction: TransactionTypeDef, breakDown: TransactionListTypeDef):
         """
         Register a sell order for the asset. Transaction is a tuple containing (Price, Quantity)
         and the breakdown is a list of tuples containing the share group and quantity within the sharegroup
@@ -162,7 +158,7 @@ class ShareGroups(SimpleTransactionChain):
             )
         )
         shareGroups = [(i, self.groups[i]) for i in positiveGroups]
-        profits = 0
+        profits: float = 0
         for i in positiveGroups:
             profits += self.groups[i] * (possiblePrice - i)
 

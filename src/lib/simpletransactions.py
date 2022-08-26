@@ -7,16 +7,17 @@ from lib.financeLib import (
     transaction_buy,
     transaction_sell,
 )
+from lib.typedefs import TransactionTypeDef
 
 
 class SimpleTransactionChain:
     def __init__(self):
         self.transactions = []
 
-    def buy(self, transaction: tuple):
+    def buy(self, transaction: TransactionTypeDef):
         return transaction_buy(transaction, self.transactions)
 
-    def sell(self, transaction: tuple):
+    def sell(self, transaction: TransactionTypeDef):
         return transaction_sell(transaction, self.transactions)
 
     def sunkCosts(self):
