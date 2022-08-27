@@ -15,3 +15,4 @@ sqlalchemy[mypy]
 pandas-stubs
 types-psycopg2
 types-beautifulsoup4
+flake8
