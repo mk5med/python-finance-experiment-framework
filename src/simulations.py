@@ -3,7 +3,7 @@ from functools import partial
 from sys import argv
 from strategies.dividend_income import simulate_dividend_income_simulation
 from strategies.crypto import (
-    simulate_day_50_moving_average as crypto_simulate_day_50_moving_average,
+    simulate_day_50_moving_average as simulate_crypto_50_day_moving_average,
 )
 from strategies.moving_average import simulate_50_day_moving_average
 import json
@@ -39,7 +39,7 @@ def createConnection():
 engine = createConnection()
 
 
-def _start(ticker):
+def _start(ticker: str) -> None:
     try:
         print(f"Processing {ticker}")
         with engine.connect() as db:
@@ -50,7 +50,7 @@ def _start(ticker):
         ...
 
 
-def seed():
+def seed() -> None:
     with open("../tickers.txt") as f:
         tickers = json.load(f)
         with ThreadPoolExecutor(100) as executor:
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         seed()
 
     with engine.connect() as db:
-        # dividend_income_simulation.start(db)
-        # crypto_simulate_day_50_moving_average.start(db)
+        simulate_dividend_income_simulation.start(db)
+        simulate_crypto_50_day_moving_average.start(db)
         simulate_50_day_moving_average.start(db)
         ...
