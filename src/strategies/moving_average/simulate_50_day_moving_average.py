@@ -1,7 +1,7 @@
 import json
 
 from simulation.AssetSimulation import AssetSimulation
-from strategies.moving_average.MovingAverageSimulationBase import (
+from simulation.MovingAverageSimulationBase import (
     MovingAverageSimulationBase,
 )
 
@@ -16,7 +16,7 @@ def _start(db, ticker):
     simulationBase = MovingAverageSimulationBase(MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL)
     simulation = AssetSimulation(db, "2000-01-01", [ticker])
     simulation.setAction(simulationBase.simulate)
-    print(f"Simulating {ticker}")
+    # print(f"Simulating {ticker}")
     simulation.start()
     print(
         f"Ticker {ticker}: ${simulationBase.initialCapital} -> ${simulationBase.cash} => ${simulationBase.cash - simulationBase.initialCapital}"
