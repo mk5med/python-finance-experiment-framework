@@ -13,13 +13,24 @@ import psycopg2
 import sqlalchemy
 
 
-def createConnection():
+def __createPostgresConnection():
     USERNAME = "postgres"
     PASSWORD = "example"
     HOST = "127.0.0.1"
 
     engine = sqlalchemy.create_engine(
-        f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}", pool_recycle=3600
+        f"postgresql+psycopg2://{USERNAME}:{PASSWORD}@{HOST}",
+        pool_recycle=3600,
+    )
+    return engine
+
+
+def createConnection():
+    # __createPostgresConnection()
+
+    engine = sqlalchemy.create_engine(
+        f"sqlite+pysqlite:///simulationDB.sqlite3",
+        connect_args={"check_same_thread": False},
     )
     return engine
 
