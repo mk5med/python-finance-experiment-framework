@@ -88,7 +88,8 @@ class ShareGroups:
     def buy(self, transaction: TransactionTypeDef):
         """
         Register a buy order for the asset. Transaction is a tuple containing (Price, Quantity)
-        >>> ShareGroups().buy((1,1))
+        >>> ShareGroups().buy((0.5,2))
+        1.0
         """
         (price, qty) = transaction
         assert price >= 0
