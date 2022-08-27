@@ -1,4 +1,4 @@
-from lib.sharegroups import ShareGroups
+from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from simulation import SimulationState
 from simulation import AssetSimulation

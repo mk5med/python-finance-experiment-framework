@@ -1,5 +1,5 @@
 from datetime import datetime
-from lib.sharegroups import ShareGroups
+from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from functools import partial
 from simulation import SimulationState

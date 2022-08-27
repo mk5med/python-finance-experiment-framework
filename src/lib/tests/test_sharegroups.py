@@ -1,4 +1,4 @@
-from lib.sharegroups import ShareGroups
+from lib.ShareGroups import ShareGroups
 
 
 def test_call():

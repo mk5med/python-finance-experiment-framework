@@ -1,4 +1,4 @@
-from lib.sharegroups import ShareGroups
+from lib.ShareGroups import ShareGroups
 from lib.typedefs import TransactionListTypeDef
 from wealthsimple.ws_parsePortfolio import ws_portfolio
 
@@ -70,4 +70,4 @@ if __name__ == "__main__":
     print(f"Price needed to earn $1: ${sg.priceForReturn(1)}")
     print(f"Price needed to earn $10: ${sg.priceForReturn(10)}")
 
-    print_futureReturns(sg, CUR_PRICE, CUR_PRICE * 0.1, 1000)
+    print_futureReturns(sg, CUR_PRICE, CUR_PRICE * 1.1, 50)

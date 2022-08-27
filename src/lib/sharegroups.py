@@ -1,4 +1,4 @@
-from lib.simpletransactions import SimpleTransactionChain
+from lib.SimpleTransactionChain import SimpleTransactionChain
 import math
 import typing
 from lib.typedefs import (
@@ -214,6 +214,9 @@ class ShareGroups:
         """
         missingValue = retVal - self.netAssetReturn(futurePrice)
         priceChange = futurePrice - curPrice
+
+        assert missingValue >= 0
+        assert priceChange >= 0
 
         return (curPrice, (missingValue / priceChange))
 
