@@ -1,5 +1,7 @@
 import json
 
+import sqlalchemy
+
 from simulation.AssetSimulation import AssetSimulation
 from simulation.MovingAverageSimulationBase import (
     MovingAverageSimulationBase,
@@ -12,7 +14,7 @@ INITIAL_CAPITAL = 1000
 MOVING_AVERAGE_WINDOW = 50
 
 
-def _start(db, ticker):
+def _start(db: sqlalchemy.engine.Connection, ticker: str):
     simulationBase = MovingAverageSimulationBase(MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL)
     simulation = AssetSimulation(db, "2000-01-01", [ticker])
     simulation.setAction(simulationBase.simulate)
@@ -23,7 +25,7 @@ def _start(db, ticker):
     )
 
 
-def start(db):
+def start(db: sqlalchemy.engine.Connection):
     tickers = None
     with open("../tickers.txt") as f:
         tickers = json.load(f)

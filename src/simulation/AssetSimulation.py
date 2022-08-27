@@ -2,6 +2,7 @@ import sqlite3
 from typing import List
 import typing
 from simulation.SimulationState import SimulationState
+import sqlalchemy
 
 ActionCallbackTypeDef = typing.Callable[
     [typing.Callable[[], None], SimulationState, List[str]], None
@@ -10,20 +11,12 @@ ActionCallbackTypeDef = typing.Callable[
 
 class AssetSimulation:
     def __init__(
-        self, db: sqlite3.Connection, startTime, tickers=None, historicalDataINode=None
+        self, db: sqlalchemy.engine.Connection, startTime: str, tickers: typing.List[str]
     ):
         # Load all historical data for the tickers
         # To be memory efficient this should be loaded into a database that is optimised for searching by date
         self.actionCallback: typing.Union[ActionCallbackTypeDef, None] = None
-        if historicalDataINode is not None:
-            raise Exception(
-                "Deprecated: Parsing a json file is outside of the scope for the simulator"
-            )
-
-        elif tickers is not None:
-            self.tickers = tickers
-        else:
-            raise Exception("tickers or historicalDataINode must be passed")
+        self.tickers = tickers
         self.simulationState = SimulationState(db, startTime)
         self.running = None
 

@@ -1,9 +1,10 @@
 import datetime
 import sqlite3
+import sqlalchemy
 
 
 class SimulationState:
-    def __init__(self, dbCon: sqlite3.Connection, currentDate: str):
+    def __init__(self, dbCon: sqlalchemy.engine.Connection, currentDate: str):
         self.currentDate = datetime.datetime.fromisoformat(currentDate)
         self.dbCon = dbCon
         ...
