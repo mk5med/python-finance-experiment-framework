@@ -1,3 +1,4 @@
+import sqlalchemy
 from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from simulation import SimulationState
@@ -72,7 +73,7 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         lastAction = 1
 
 
-def start(db):
+def start(db: sqlalchemy.engine.Connection):
     simulation = AssetSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
     simulation.setAction(simulate)
     simulation.start()
