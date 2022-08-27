@@ -1,9 +1,14 @@
 from lib.simpletransactions import SimpleTransactionChain
 import math
 import typing
-from lib.typedefs import TransactionListTypeDef, TransactionTypeDef, ShareGroupChainTypeDef
+from lib.typedefs import (
+    TransactionListTypeDef,
+    TransactionTypeDef,
+    ShareGroupChainTypeDef,
+)
 
-class ShareGroups(SimpleTransactionChain):
+
+class ShareGroups:
     @staticmethod
     def fromSimpleChain(transactions: TransactionListTypeDef):
         """
@@ -76,7 +81,7 @@ class ShareGroups(SimpleTransactionChain):
                 raise Exception(f"Unsupported transaction type: '{transaction[0]}'")
 
     def __init__(self):
-        super().__init__()
+        self.simpleTransactions = SimpleTransactionChain()
         self.groups: typing.Dict[float, float] = {}
         self.shareGroupTransactionChain: ShareGroupChainTypeDef = []
 
@@ -97,7 +102,7 @@ class ShareGroups(SimpleTransactionChain):
         self.groups[price] += qty
 
         # Record the transaction
-        super().buy(transaction)
+        self.simpleTransactions.buy(transaction)
         self.shareGroupTransactionChain.append(
             (
                 "buy",
@@ -141,7 +146,7 @@ class ShareGroups(SimpleTransactionChain):
             self.groups[price] -= qty
 
         # Record the transaction
-        super().sell(transaction)
+        self.simpleTransactions.sell(transaction)
         self.shareGroupTransactionChain.append(("sell", transaction, breakDown))
         return totalPrice
 
@@ -174,7 +179,7 @@ class ShareGroups(SimpleTransactionChain):
         retVal = Price * (q_0 + q_1 + ... + q_j) - (p_0 * q_0 + p_1 * q_1 + ... + p_j * q_j)
         retVal = Price * ownedStocks() - sunkCosts()
         """
-        if len(self.transactions) == 0:
+        if len(self.simpleTransactions.transactions) == 0:
             return None
         return (retVal + self.sunkCosts()) / self.ownedStocks()
 

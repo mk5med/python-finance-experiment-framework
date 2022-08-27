@@ -1,3 +1,4 @@
+import typing
 from lib.financeLib import (
     netAssetReturn,
     netWorth,

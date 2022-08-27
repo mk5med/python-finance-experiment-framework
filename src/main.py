@@ -1,4 +1,5 @@
 from lib.sharegroups import ShareGroups
+from lib.typedefs import TransactionListTypeDef
 from wealthsimple.ws_parsePortfolio import ws_portfolio
 
 BTC_TRANSACTIONS = [
@@ -40,7 +41,7 @@ if __name__ == "__main__":
 
     print("imported yf")
     PORTFOLIO = ws_portfolio()
-    TRANSACTIONS = []
+    TRANSACTIONS: TransactionListTypeDef = []
     # TRANSACTIONS = PORTFOLIO['BITF']
     # TRANSACTIONS = BTC_TRANSACTIONS
 
