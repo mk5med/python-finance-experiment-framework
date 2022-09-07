@@ -45,15 +45,16 @@ def simulate(
     ...
 
 
-def start(db: sqlalchemy.engine.Connection):
+def start(engine: sqlalchemy.engine.Engine):
     global pool
     import json
 
-    with open("../tickers.txt") as f:
-        tickers = json.load(f)
-        simulation = AssetSimulation(db, "2022-01-01", tickers=tickers)
-        simulation.setAction(simulate)
+    with engine.connect() as db:
+        with open("../tickers.txt") as f:
+            tickers = json.load(f)
+            simulation = AssetSimulation(db, "2022-01-01", tickers=tickers)
+            simulation.setAction(simulate)
 
-        pool.start()
-        simulation.start()
-        del pool
+            pool.start()
+            simulation.start()
+            del pool

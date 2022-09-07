@@ -64,8 +64,6 @@ if __name__ == "__main__":
     if "--seed" in argv:
         seed()
 
-    with engine.connect() as db:
-        # simulate_dividend_income_simulation.start(db)
-        # simulate_crypto_50_day_moving_average.start(db)
-        simulate_50_day_moving_average.start(db)
-        ...
+    # simulate_dividend_income_simulation.start(engine)
+    # simulate_crypto_50_day_moving_average.start(engine)
+    simulate_50_day_moving_average.start(createConnection)

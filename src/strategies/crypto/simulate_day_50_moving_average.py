@@ -73,8 +73,9 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         lastAction = 1
 
 
-def start(db: sqlalchemy.engine.Connection):
-    simulation = AssetSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
-    simulation.setAction(simulate)
-    simulation.start()
-    print("Status", "${:,.2f}".format(cash))
+def start(engine: sqlalchemy.engine.Engine):
+    with engine.connect() as db:
+        simulation = AssetSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
+        simulation.setAction(simulate)
+        simulation.start()
+        print("Status", "${:,.2f}".format(cash))
