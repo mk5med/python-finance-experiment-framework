@@ -18,23 +18,23 @@ class AssetSimulation:
         self.actionCallback: typing.Union[ActionCallbackTypeDef, None] = None
         self.tickers = tickers
         self.simulationState = SimulationState(db, startTime)
-        self.running = None
+        self.running = False
 
     def setAction(
         self,
         actionCallback: ActionCallbackTypeDef,
-    ):
+    ) -> None:
         self.actionCallback = actionCallback
 
-    def nextDay(self):
+    def nextDay(self) -> None:
         self.simulationState.incrementDate()
 
-    def stop(self):
+    def stop(self) -> None:
         self.running = False
 
-    def start(self):
+    def start(self) -> None:
         if self.actionCallback is None:
-            raise "actionCallback cannot be null"
+            raise Exception("actionCallback cannot be null")
         # Should ideally support displaying visuals with plotly
 
         self.running = True

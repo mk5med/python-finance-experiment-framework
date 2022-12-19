@@ -85,7 +85,7 @@ class ShareGroups:
         self.groups: typing.Dict[float, float] = {}
         self.shareGroupTransactionChain: ShareGroupChainTypeDef = []
 
-    def buy(self, transaction: TransactionTypeDef):
+    def buy(self, transaction: TransactionTypeDef) -> float:
         """
         Register a buy order for the asset. Transaction is a tuple containing (Price, Quantity)
         >>> ShareGroups().buy((0.5,2))
@@ -184,7 +184,7 @@ class ShareGroups:
             return None
         return (retVal + self.sunkCosts()) / self.ownedStocks()
 
-    def sunkCosts(self):
+    def sunkCosts(self) -> float:
         """
         Returns the amount of money that has been spent to purchase the current
         share group set.
@@ -195,7 +195,7 @@ class ShareGroups:
         """
         return sum([self.groups[price] * price for price in self.groups])
 
-    def ownedStocks(self):
+    def ownedStocks(self) -> float:
         """
         Returns the amount of stocks owned in the set of sharegroups.
 
@@ -207,7 +207,7 @@ class ShareGroups:
 
     def transactionForReturnAtPrice(
         self, curPrice: float, futurePrice: float, retVal: float
-    ):
+    ) -> typing.Tuple[float, float]:
         """
         Calculate the quantity of shares at `curPrice` to purchase
         such that when `curPrice` equals `futurePrice` the sharegroups return will be equal to `retVal`
@@ -220,7 +220,7 @@ class ShareGroups:
 
         return (curPrice, (missingValue / priceChange))
 
-    def netAssetReturn(self, curPrice: float):
+    def netAssetReturn(self, curPrice: float) -> float:
         """
         Calculate the asset return/value of the current sharegroups.
         This considers the size of each owned share group.

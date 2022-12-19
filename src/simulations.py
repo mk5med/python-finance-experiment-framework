@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from sys import argv
+from typing import Callable
 from strategies.dividend_income import simulate_dividend_income_simulation
 from strategies.crypto import (
     simulate_day_50_moving_average as simulate_crypto_50_day_moving_average,
@@ -11,9 +12,10 @@ import pandas as pd
 import sqlite3
 import psycopg2
 import sqlalchemy
+import time
 
 
-def __createPostgresConnection():
+def __createPostgresConnection() -> sqlalchemy.engine.Engine:
     USERNAME = "postgres"
     PASSWORD = "example"
     HOST = "127.0.0.1"
@@ -25,7 +27,7 @@ def __createPostgresConnection():
     return engine
 
 
-def createConnection():
+def createConnection() -> sqlalchemy.engine.Engine:
     # __createPostgresConnection()
 
     engine = sqlalchemy.create_engine(
@@ -60,10 +62,32 @@ def seed() -> None:
         #     print(result)
 
 
+def run_simulation(
+    strategyName: str,
+    simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame]
+):
+
+    start = time.time()
+    result = simulation(createConnection)
+    end = time.time()
+    print(result)
+    print(
+        f"This strategy ranges from ${min(result['delta'])} to ${max(result['delta'])} in profit."
+    )
+    print(f"Duration: {end-start:.03f}s")
+
+    return pd.Series({
+        'strategyName': strategyName, 
+        'duration': end-start,
+        'range_min': min(result["delta"]),
+        'range_max': max(result["delta"]),
+    })
+
+
 if __name__ == "__main__":
     if "--seed" in argv:
         seed()
 
     # simulate_dividend_income_simulation.start(engine)
     # simulate_crypto_50_day_moving_average.start(engine)
-    simulate_50_day_moving_average.start(createConnection)
+    run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)

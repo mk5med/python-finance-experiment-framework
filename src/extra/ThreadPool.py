@@ -20,11 +20,11 @@ class ThreadPool:
             self.threads.append(thread)
         ...
 
-    def start(self):
+    def start(self) -> None:
         for i in self.threads:
             i.start()
 
-    def __del__(self):
+    def __del__(self) -> None:
         for i in self.threads:
             del i
         ...

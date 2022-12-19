@@ -1,4 +1,5 @@
 from datetime import datetime
+import typing
 from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from functools import partial
@@ -6,7 +7,7 @@ from simulation import SimulationState
 
 
 class MovingAverageSimulationBase:
-    def __init__(self, movingAverageWindow: int, initialCapital=1000):
+    def __init__(self, movingAverageWindow: int, initialCapital: float =1000) -> None:
         self.movingAverage = MovingAverage(movingAverageWindow)
 
         self.cash = self.initialCapital = initialCapital
@@ -14,7 +15,7 @@ class MovingAverageSimulationBase:
         self.portfolio = ShareGroups()
         self.timeStart = datetime.now()
 
-    def simulate(self, stopCallback, simulationState: SimulationState, tickers: list):
+    def simulate(self, stopCallback: typing.Callable[[], None], simulationState: SimulationState, tickers: typing.List[str]) -> None:
 
         price = simulationState.getTickerPrice(tickers[0])
 
@@ -30,7 +31,7 @@ class MovingAverageSimulationBase:
             self.timeStart = datetime.now()
             print(tickers, date)
 
-        adjustedPrice = (openPrice + closePrice) / 2
+        adjustedPrice: float = (openPrice + closePrice) / 2
         historicalAveragePrice = self.movingAverage.average()
 
         self.movingAverage.addData(adjustedPrice)
@@ -48,7 +49,7 @@ class MovingAverageSimulationBase:
             self.__sellAction(simulationState, adjustedPrice)
             self.lastAction = 1
 
-    def __buyAction(self, simulationState, adjustedPrice):
+    def __buyAction(self, simulationState: SimulationState, adjustedPrice: float) -> float:
         if self.cash < adjustedPrice:
             return 0
 
@@ -60,7 +61,7 @@ class MovingAverageSimulationBase:
 
         return cost
 
-    def __sellAction(self, simulationState, adjustedPrice):
+    def __sellAction(self, simulationState: SimulationState, adjustedPrice: float) -> None:
         # Able to sell
         if self.portfolio.ownedStocks() == 0:
             return

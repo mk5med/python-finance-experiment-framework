@@ -6,7 +6,7 @@ from simulation import AssetSimulation
 
 movingAverage = MovingAverage(10)
 portfolio = ShareGroups()
-cash = 1000
+cash: float = 1000
 lastAction = 0
 
 

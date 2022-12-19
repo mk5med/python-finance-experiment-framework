@@ -6,13 +6,13 @@ class MovingAverage:
         self.values: List[float] = []
         self.maxLength = maxLength
 
-    def addData(self, data: float):
+    def addData(self, data: float) -> None:
         if len(self.values) == self.maxLength:
             self.values.pop(0)
 
         self.values.append(data)
 
-    def average(self):
+    def average(self) -> float:
         if len(self.values) != self.maxLength:
             return -1
 

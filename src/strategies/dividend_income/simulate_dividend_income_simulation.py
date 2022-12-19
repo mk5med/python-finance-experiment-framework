@@ -8,16 +8,16 @@ from simulation import SimulationState, AssetSimulation
 import queue
 
 taskQueue = typing.cast(TaskType, queue.Queue())
-resultQueue: queue.Queue = queue.Queue()
+resultQueue: "queue.Queue[typing.Any]" = queue.Queue()
 failedTaskQueue = typing.cast(TaskType, queue.Queue())
 pool: ThreadPool = ThreadPool(5, taskQueue, failedTaskQueue, print)
 
 
-def findBestAsset():
+def findBestAsset() -> None:
     ...
 
 
-def getExDividendDate():
+def getExDividendDate() -> None:
     # If it is a live feed, check ticker.info
     # If it is an old feed, check the next date on which a dividend was returned
     ...
@@ -27,7 +27,7 @@ def simulate(
     stopSimulation: typing.Callable[[], None],
     simulationState: SimulationState,
     tickers: typing.List[str],
-):
+) -> None:
     # 1) Create a portfolio with the best dividend return
     # 2) Evaluate the portfolio periodically and rebalance as needed
     #   A dividend portfolio will be rebalanced every time the price changes
@@ -45,7 +45,7 @@ def simulate(
     ...
 
 
-def start(engine: sqlalchemy.engine.Engine):
+def start(engine: sqlalchemy.engine.Engine) -> None:
     global pool
     import json
 
