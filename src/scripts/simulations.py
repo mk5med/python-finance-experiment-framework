@@ -64,7 +64,7 @@ def seed() -> None:
 
 def run_simulation(
     strategyName: str,
-    simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame]
+    simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame],
 ):
 
     start = time.time()
@@ -76,12 +76,14 @@ def run_simulation(
     )
     print(f"Duration: {end-start:.03f}s")
 
-    return pd.Series({
-        'strategyName': strategyName, 
-        'duration': end-start,
-        'range_min': min(result["delta"]),
-        'range_max': max(result["delta"]),
-    })
+    return pd.Series(
+        {
+            "strategyName": strategyName,
+            "duration": end - start,
+            "range_min": min(result["delta"]),
+            "range_max": max(result["delta"]),
+        }
+    )
 
 
 if __name__ == "__main__":

@@ -11,7 +11,10 @@ ActionCallbackTypeDef = typing.Callable[
 
 class AssetSimulation:
     def __init__(
-        self, db: sqlalchemy.engine.Connection, startTime: str, tickers: typing.List[str]
+        self,
+        db: sqlalchemy.engine.Connection,
+        startTime: str,
+        tickers: typing.List[str],
     ):
         # Load all historical data for the tickers
         # To be memory efficient this should be loaded into a database that is optimised for searching by date

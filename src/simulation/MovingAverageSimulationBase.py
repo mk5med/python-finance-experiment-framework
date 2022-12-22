@@ -7,7 +7,7 @@ from simulation import SimulationState
 
 
 class MovingAverageSimulationBase:
-    def __init__(self, movingAverageWindow: int, initialCapital: float =1000) -> None:
+    def __init__(self, movingAverageWindow: int, initialCapital: float = 1000) -> None:
         self.movingAverage = MovingAverage(movingAverageWindow)
 
         self.cash = self.initialCapital = initialCapital
@@ -15,7 +15,12 @@ class MovingAverageSimulationBase:
         self.portfolio = ShareGroups()
         self.timeStart = datetime.now()
 
-    def simulate(self, stopCallback: typing.Callable[[], None], simulationState: SimulationState, tickers: typing.List[str]) -> None:
+    def simulate(
+        self,
+        stopCallback: typing.Callable[[], None],
+        simulationState: SimulationState,
+        tickers: typing.List[str],
+    ) -> None:
 
         price = simulationState.getTickerPrice(tickers[0])
 
@@ -49,7 +54,9 @@ class MovingAverageSimulationBase:
             self.__sellAction(simulationState, adjustedPrice)
             self.lastAction = 1
 
-    def __buyAction(self, simulationState: SimulationState, adjustedPrice: float) -> float:
+    def __buyAction(
+        self, simulationState: SimulationState, adjustedPrice: float
+    ) -> float:
         if self.cash < adjustedPrice:
             return 0
 
@@ -61,7 +68,9 @@ class MovingAverageSimulationBase:
 
         return cost
 
-    def __sellAction(self, simulationState: SimulationState, adjustedPrice: float) -> None:
+    def __sellAction(
+        self, simulationState: SimulationState, adjustedPrice: float
+    ) -> None:
         # Able to sell
         if self.portfolio.ownedStocks() == 0:
             return
