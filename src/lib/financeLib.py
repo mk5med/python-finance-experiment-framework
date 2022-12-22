@@ -26,32 +26,53 @@ def transaction_sell(transaction: tuple, transactions: list):
 
 
 def transaction_sell_verbose(price: float, quantity: int, transactions: list):
+    """
+    An alternative way to sell. Combines a price and quantity value
+    into a tuple and calls `transaction_sell`
+    """
     transaction_sell((price, quantity), transactions)
 
 
-def sunkCost(transactions: list):
+def sunkCost(transactions: list) -> float:
+    """
+    Calculate the monetary value invested in the portfolio
+    """
     return sum([i[0] * i[1] for i in transactions])
 
 
-def ownedStocks(transactions: list):
+def ownedStocks(transactions: list) -> float:
+    """
+    Get the number of owned stocks
+    """
     # print(transactions)
     return sum([i[1] for i in transactions])
 
 
-def netWorth(curPrice: float, transactions: list):
+def netWorth(curPrice: float, transactions: list) -> float:
+    """
+    Calculate the value of the portfolio
+    """
     return ownedStocks(transactions) * curPrice
 
 
-def stockReturn(curPrice: float, purchasePrice: float):
+def stockReturn(curPrice: float, purchasePrice: float) -> float:
+    """
+    Calculate the difference in price. This method is used for documentation
+    """
     return curPrice - purchasePrice
 
 
-def netInvestmentWorth(curPrice: float, transactions: list):
+def netInvestmentReturn(curPrice: float, transactions: list) -> float:
+    """
+    Calculate the return on investment (ROI) of te portfolio at a given price
+    """
     return netWorth(curPrice, transactions) - sunkCost(transactions)
 
 
 def netAssetReturn(curPrice: float, transactions: list):
     """
+    **BROKEN**
+    
     This function should tell a user how much profit
     they can make if they sell all their assets at a given price.
     This means that sell orders should be skipped as the profit has already been realised.
