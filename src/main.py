@@ -8,7 +8,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--simulations",
-        help="",
+        help="Run all simulations",
     )
     args = parser.parse_args()
     print(args)

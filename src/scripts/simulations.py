@@ -1,3 +1,9 @@
+import os
+import sys
+
+# Fix dependency resolution when invoking the script directly
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from sys import argv
@@ -53,7 +59,7 @@ def _start(ticker: str) -> None:
 
 
 def seed() -> None:
-    with open("../tickers.txt") as f:
+    with open("../../tickers.txt") as f:
         tickers = json.load(f)
         with ThreadPoolExecutor(100) as executor:
             result = executor.map(partial(_start), tickers)

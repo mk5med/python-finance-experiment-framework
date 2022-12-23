@@ -50,7 +50,7 @@ def start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
         tickers = json.load(f)
 
     tickers = tickers[:100]
-    with ThreadPoolExecutor(50) as executor:
+    with ThreadPoolExecutor(10) as executor:
         result = executor.map(partial(_start, createConnection), tickers)
     # result = []
     # for ticker in tickers:
