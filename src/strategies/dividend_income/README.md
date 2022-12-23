@@ -53,6 +53,24 @@ The [capital required](#capital-required-to-create-the-portfolio) to create a di
 return is high. Additionally the return on investment for dividends is around 2% to 5% per year, the money can be spent
 elsewhere for higher ROI yields. A dividend strategy portfolio is built for long term wealth, where the long term is 10 to 50 years.
 
+Proof:
+1. Suppose the desired income per year is $1000
+2. Assume a general 2% dividend yield
+3. $1000 = 0.02 * x -> $1000 / 0.02 = x -> $50000 = x
+4. $1000 = 0.05 * x -> $1000 / 0.05 = x -> $20000 = x
+6. $1000 = 0.10 * x -> $1000 / 0.10 = x -> $10000 = x
+
+Investment required is very high and to minimize risk multiple assets will need to be used to diversify the portfolio.
+Due to the simplicity of this strategy, even with diversification its likely others are using this and
+are invested in the same set of high-dividend yield assets, therefore the risk gained by diversifying may not be as great.
+
+### Combination of yields
+1. Asset A1 = 2% yield
+2. Asset A2 = 2% yield
+3. Asset A3 = 4% yield
+4. Net yield (A1, A2, A3, T1, T2, T3, Invested) = (A1, A2, A3) * (T1, T2, T3) * Invested / Invested = (A1, A2, A3) * (T1, T2, T3) = Weighted sum
+
+
 ## Metrics
 Historical dividend average price & Volatility
 ```java
