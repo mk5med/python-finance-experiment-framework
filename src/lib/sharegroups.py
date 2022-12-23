@@ -114,8 +114,9 @@ class ShareGroups:
         # Return the final cost
         return price * qty
 
-
-    def sell_multiple(self, transaction: TransactionTypeDef, breakDown: TransactionListTypeDef):
+    def sell_multiple(
+        self, transaction: TransactionTypeDef, breakDown: TransactionListTypeDef
+    ):
         """
         @deprecated
 
@@ -155,8 +156,10 @@ class ShareGroups:
 
     def sell_single(self, transaction: TransactionTypeDef):
         (price, qty) = transaction
-        assert price in self.groups # Check that the referenced tranche exists
-        assert qty <= self.groups[price] # Check that the referenced tranche has enough quantity to be sold
+        assert price in self.groups  # Check that the referenced tranche exists
+        assert (
+            qty <= self.groups[price]
+        )  # Check that the referenced tranche has enough quantity to be sold
         self.groups[price] -= qty
         return price
 
