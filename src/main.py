@@ -6,10 +6,25 @@ if __name__ == "__main__":
         prog="Personal Finance Explorer",
         description="Visually explore, query, and drill-down personal financial portfolios",
     )
+
     parser.add_argument(
+        "--seed",
+        help="Run all simulations",
+        action="store_const",
+        dest="simulation_seed",
+        const=True,
+    )
+    parser.add_argument(
+        "-sim",
         "--simulations",
         help="Run all simulations",
+        action="store_const",
+        const=True,
     )
     args = parser.parse_args()
     print(args)
-    ...
+    if args.simulation_seed:
+        scripts.simulations.seed()
+    if args.simulations == True:
+        scripts.simulations.run_all_simulations()
+        ...

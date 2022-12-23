@@ -43,7 +43,6 @@ def createConnection() -> sqlalchemy.engine.Engine:
     return engine
 
 
-# db = sqlite3.connect("simulationDB.sqlite3", check_same_thread=False)
 engine = createConnection()
 
 
@@ -51,7 +50,7 @@ def _start(ticker: str) -> None:
     try:
         print(f"Processing {ticker}")
         with engine.connect() as db:
-            data = pd.read_csv(f"../historical_data/{ticker}.csv")
+            data = pd.read_csv(f"./historical_data/{ticker}.csv")
             data.to_sql(ticker, db)
     except Exception as e:
         print("Fail", e)
@@ -59,9 +58,10 @@ def _start(ticker: str) -> None:
 
 
 def seed() -> None:
-    with open("../../tickers.txt") as f:
+    print("Seeding database")
+    with open("./tickers.txt") as f:
         tickers = json.load(f)
-        with ThreadPoolExecutor(100) as executor:
+        with ThreadPoolExecutor(1) as executor:
             result = executor.map(partial(_start), tickers)
 
         # for i in result:
@@ -92,10 +92,12 @@ def run_simulation(
     )
 
 
-if __name__ == "__main__":
-    if "--seed" in argv:
-        seed()
-
+def run_all_simulations():
     # simulate_dividend_income_simulation.start(engine)
     # simulate_crypto_50_day_moving_average.start(engine)
     run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)
+
+
+if __name__ == "__main__":
+    if "--seed" in argv:
+        seed()
