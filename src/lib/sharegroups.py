@@ -158,6 +158,7 @@ class ShareGroups:
         assert price in self.groups # Check that the referenced tranche exists
         assert qty <= self.groups[price] # Check that the referenced tranche has enough quantity to be sold
         self.groups[price] -= qty
+        return price
 
     def maximumProfitAtPrice(self, possiblePrice: float):
         """
