@@ -86,7 +86,7 @@ class MovingAverageSimulationBase:
             sum([i[1] for i in shareGroups]),
         )
 
-        cost = self.portfolio.sell(transaction, shareGroups)
+        cost = self.portfolio.sell_multiple(transaction, shareGroups)
         self.cash += cost
 
         # print(

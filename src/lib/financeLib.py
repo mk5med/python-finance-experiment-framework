@@ -72,7 +72,7 @@ def netInvestmentReturn(curPrice: float, transactions: list) -> float:
 def netAssetReturn(curPrice: float, transactions: list):
     """
     **BROKEN**
-    
+
     This function should tell a user how much profit
     they can make if they sell all their assets at a given price.
     This means that sell orders should be skipped as the profit has already been realised.

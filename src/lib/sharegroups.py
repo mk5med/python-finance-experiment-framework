@@ -65,7 +65,7 @@ class ShareGroups:
                 assert (
                     quantity == 0
                 ), f"No more share groups available to sell {quantity}. Ensure that the transaction chain is complete and correct."
-                shareGroups.sell((sellPrice, abs(transaction[1])), breakDown)
+                shareGroups.sell_multiple((sellPrice, abs(transaction[1])), breakDown)
 
         return shareGroups
 
@@ -76,7 +76,7 @@ class ShareGroups:
             if transaction[0] == "buy":
                 shareGroups.buy(transaction[1])
             elif transaction[0] == "sell":
-                shareGroups.sell(transaction[1], transaction[2])
+                shareGroups.sell_multiple(transaction[1], transaction[2])
             else:
                 raise Exception(f"Unsupported transaction type: '{transaction[0]}'")
 
@@ -110,10 +110,15 @@ class ShareGroups:
                 transaction,
             )
         )
+
+        # Return the final cost
         return price * qty
 
-    def sell(self, transaction: TransactionTypeDef, breakDown: TransactionListTypeDef):
+
+    def sell_multiple(self, transaction: TransactionTypeDef, breakDown: TransactionListTypeDef):
         """
+        @deprecated
+
         Register a sell order for the asset. Transaction is a tuple containing (Price, Quantity)
         and the breakdown is a list of tuples containing the share group and quantity within the sharegroup
         to sell [(price_i, quantity_i)] where i is an index in the list.
@@ -133,23 +138,26 @@ class ShareGroups:
         # Validate the quantities are correct
         assert totalQty == sum(
             [assetGroup[1] for assetGroup in breakDown]
-        ), f"The total quantity of assets to sell ({totalQty}) is not equal to the assets in the breakdown ({sum([assetGroup[1] for assetGroup in breakDown])}). {breakDown}"
+        ), f"The total quantity of assets to sell ({totalQty}) is\
+            not equal to the assets in the breakdown ({sum([assetGroup[1] for assetGroup in breakDown])}). {breakDown}"
 
         # assert totalPrice == sum(
         #     [assetGroup[0] * assetGroup[1] for assetGroup in breakDown]
         # ), f"The total price of assets to cell ({totalPrice}) is not equal to the profits of assets in the breakdown. {breakDown}"
 
         for subTransaction in breakDown:
-            (price, qty) = subTransaction
-
-            assert price in self.groups
-            assert qty <= self.groups[price]
-            self.groups[price] -= qty
+            self.sell_single(subTransaction)
 
         # Record the transaction
         self.simpleTransactions.sell(transaction)
         self.shareGroupTransactionChain.append(("sell", transaction, breakDown))
         return totalPrice
+
+    def sell_single(self, transaction: TransactionTypeDef):
+        (price, qty) = transaction
+        assert price in self.groups # Check that the referenced tranche exists
+        assert qty <= self.groups[price] # Check that the referenced tranche has enough quantity to be sold
+        self.groups[price] -= qty
 
     def maximumProfitAtPrice(self, possiblePrice: float):
         """
@@ -207,7 +215,7 @@ class ShareGroups:
 
     def transactionForReturnAtPrice(
         self, curPrice: float, futurePrice: float, retVal: float
-    ) -> typing.Tuple[float, float]:
+    ) -> TransactionTypeDef:
         """
         Calculate the quantity of shares at `curPrice` to purchase
         such that when `curPrice` equals `futurePrice` the sharegroups return will be equal to `retVal`

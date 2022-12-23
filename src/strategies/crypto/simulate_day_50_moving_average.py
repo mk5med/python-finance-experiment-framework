@@ -63,7 +63,7 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
             sum([i[1] for i in shareGroups]),
         )
 
-        cost = portfolio.sell(transaction, shareGroups)
+        cost = portfolio.sell_multiple(transaction, shareGroups)
         cash += cost
 
         print(
