@@ -4,14 +4,23 @@ from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from functools import partial
 from simulation import SimulationState
+import enum
 
+class LastActionEnum(enum.Enum):
+    nothing=0
+    buy=-1
+    sell=1
 
 class MovingAverageSimulationBase:
+    """
+    The base logic for simulators using moving average calculations
+    """
+
     def __init__(self, movingAverageWindow: int, initialCapital: float = 1000) -> None:
         self.movingAverage = MovingAverage(movingAverageWindow)
 
         self.cash = self.initialCapital = initialCapital
-        self.lastAction = 0
+        self.lastAction = LastActionEnum.nothing
         self.portfolio = ShareGroups()
         self.timeStart = datetime.now()
 
@@ -36,6 +45,7 @@ class MovingAverageSimulationBase:
             self.timeStart = datetime.now()
             print(tickers, date)
 
+        # Normalize the price for the day
         adjustedPrice: float = (openPrice + closePrice) / 2
         historicalAveragePrice = self.movingAverage.average()
 
@@ -44,52 +54,45 @@ class MovingAverageSimulationBase:
             # No average available
             return
 
+        # If the price is greater than the historical average
         if adjustedPrice > historicalAveragePrice:
-            if self.lastAction == -1:
+            # Exit if the last action was a buy action
+            if self.lastAction == LastActionEnum.buy:
                 return
 
+            # Make the transaction and remove the cash
             self.cash -= self.__buyAction(simulationState, adjustedPrice)
-            self.lastAction = -1
-        else:
-            self.__sellAction(simulationState, adjustedPrice)
-            self.lastAction = 1
 
-    def __buyAction(
-        self, simulationState: SimulationState, adjustedPrice: float
-    ) -> float:
-        if self.cash < adjustedPrice:
+            # Mark that a buy action was made
+            self.lastAction = LastActionEnum.buy
+        else:
+            # Make the transaction and add the cash
+            self.cash += self.__sellAction(simulationState, adjustedPrice)
+
+            # Mark that a sell action was made
+            self.lastAction = LastActionEnum.sell
+
+    def __buyAction(self, simulationState: SimulationState, price: float) -> float:
+        if self.cash < price:
             return 0
 
         # Buy
-        cost = self.portfolio.buy((adjustedPrice, 1))
-        # print(
-        #     f"{simulationState.currentDate}: Buying {1} for ${adjustedPrice * 1} @ {adjustedPrice}"
-        # )
+        cost = self.portfolio.buy((price, 1))
 
         return cost
 
-    def __sellAction(
-        self, simulationState: SimulationState, adjustedPrice: float
-    ) -> None:
+    def __sellAction(self, simulationState: SimulationState, price: float) -> None:
         # Able to sell
         if self.portfolio.ownedStocks() == 0:
-            return
-        self.portfolio.sunkCosts()
-        (profit, shareGroups) = self.portfolio.maximumProfitAtPrice(adjustedPrice)
+            return 0
+
+        (profit, shareGroups) = self.portfolio.maximumProfitAtPrice(price)
 
         # Reason to sell
         if profit == 0:
-            return
+            return 0
 
-        transaction = (
-            adjustedPrice,
-            sum([i[1] for i in shareGroups]),
-        )
+        for shareGroup in shareGroups:
+            self.portfolio.sell_single(shareGroup)
 
-        cost = self.portfolio.sell_multiple(transaction, shareGroups)
-        self.cash += cost
-
-        # print(
-        #     f"{simulationState.currentDate}: Sold at ${adjustedPrice}. Current cash",
-        #     "${:,.2f}".format(self.cash),
-        # )
+        return profit

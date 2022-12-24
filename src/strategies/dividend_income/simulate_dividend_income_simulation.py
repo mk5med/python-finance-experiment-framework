@@ -36,12 +36,12 @@ def simulate(
     #   To account for fluctuations we will use the average between the open and close
     # 3) For the dividend to come in it must be held until the ex-dividend date.
     #    where do we find the upcoming ex-dividend date?
+
     print(simulationState.currentDate)
     for ticker in tickers[:5]:
         taskQueue.put((simulationState.getTickerPrice, [ticker]))
 
     taskQueue.join()
-    # stopSimulation()
     ...
 
 
@@ -50,7 +50,7 @@ def start(engine: sqlalchemy.engine.Engine) -> None:
     import json
 
     with engine.connect() as db:
-        with open("../tickers.txt") as f:
+        with open("./tickers.txt") as f:
             tickers = json.load(f)
             simulation = AssetSimulation(db, "2022-01-01", tickers=tickers)
             simulation.setAction(simulate)

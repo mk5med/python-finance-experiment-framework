@@ -129,6 +129,7 @@ class ShareGroups:
 
             Price == sum(price_i * quantity_i)
         """
+        raise Exception("sell_multiple is deprecated to improve composibility. please use sell_single")
         assert type(transaction) == tuple
         assert type(breakDown) == list
 
@@ -155,18 +156,25 @@ class ShareGroups:
         return totalPrice
 
     def sell_single(self, transaction: TransactionTypeDef):
+        """
+        Sell (price, qty)
+        """
         (price, qty) = transaction
         assert price in self.groups  # Check that the referenced tranche exists
         assert (
             qty <= self.groups[price]
         )  # Check that the referenced tranche has enough quantity to be sold
         self.groups[price] -= qty
+        self.simpleTransactions.sell(transaction)
+        self.shareGroupTransactionChain.append(("sell", transaction))
         return price
 
     def maximumProfitAtPrice(self, possiblePrice: float):
         """
         Calculate the highest possible returns for the current sharegroups for the asset
         at a given price point.
+
+        Will always return a profit of 0 or higher
         """
         # Find all groups that have a positive return at the possible price
         positiveGroups = list(

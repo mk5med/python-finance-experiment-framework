@@ -46,7 +46,7 @@ def _start(
 
 def start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
     tickers = None
-    with open("../tickers.txt") as f:
+    with open("./tickers.txt") as f:
         tickers = json.load(f)
 
     tickers = tickers[:100]

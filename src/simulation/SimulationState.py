@@ -4,6 +4,10 @@ import sqlalchemy
 
 
 class SimulationState:
+    """
+    Contains the immutable state of a simulation at a moment in time
+    """
+
     def __init__(self, dbCon: sqlalchemy.engine.Connection, currentDate: str):
         self.currentDate = datetime.datetime.fromisoformat(currentDate)
         self.dbCon = dbCon
@@ -20,10 +24,10 @@ class SimulationState:
 
             # index, date, open, high, low, close, adj close, volume
             return res.fetchone()
-        except Exception as e:
+        except Exception as error:
             if cursor is not None:
                 cursor.close()
-            raise e
+            raise error
 
     def getNextDividendData(self, ticker: str):
         ...
