@@ -129,7 +129,9 @@ class ShareGroups:
 
             Price == sum(price_i * quantity_i)
         """
-        raise Exception("sell_multiple is deprecated to improve composibility. please use sell_single")
+        raise Exception(
+            "sell_multiple is deprecated to improve composibility. please use sell_single"
+        )
         assert type(transaction) == tuple
         assert type(breakDown) == list
 
