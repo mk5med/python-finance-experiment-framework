@@ -9,7 +9,15 @@ ActionCallbackTypeDef = typing.Callable[
 ]
 
 
-class AssetSimulation:
+class MarketSimulation:
+    """
+    Controller and executor of simulations.
+
+    Responsible for:
+     - Invoking the simulation callback
+     - Updating the simulation state
+    """
+
     def __init__(
         self,
         db: sqlalchemy.engine.Connection,
@@ -18,7 +26,9 @@ class AssetSimulation:
     ):
         # Load all historical data for the tickers
         # To be memory efficient this should be loaded into a database that is optimised for searching by date
-        self.actionCallback: typing.Union[ActionCallbackTypeDef, None] = None
+        self.actionCallback: typing.Union[
+            ActionCallbackTypeDef, None
+        ] = lambda _1, _2, _3: None
         self.tickers = tickers
         self.simulationState = SimulationState(db, startTime)
         self.running = False
@@ -49,4 +59,3 @@ class AssetSimulation:
                 self.nextDay()
             except:
                 self.stop()
-        ...

@@ -4,7 +4,7 @@ import sqlalchemy
 import yfinance as yf
 from extra.ThreadPool import ThreadPool
 from extra.threadTypes import TaskType
-from simulation import SimulationState, AssetSimulation
+from simulation import SimulationState, MarketSimulation
 import queue
 
 taskQueue = typing.cast(TaskType, queue.Queue())
@@ -52,7 +52,7 @@ def start(engine: sqlalchemy.engine.Engine) -> None:
     with engine.connect() as db:
         with open("./tickers.txt") as f:
             tickers = json.load(f)
-            simulation = AssetSimulation(db, "2022-01-01", tickers=tickers)
+            simulation = MarketSimulation(db, "2022-01-01", tickers=tickers)
             simulation.setAction(simulate)
 
             pool.start()

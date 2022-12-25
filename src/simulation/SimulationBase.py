@@ -1,5 +1,5 @@
 import typing
-import SimulationState
+import simulation.SimulationState as SimulationState
 import abc
 
 

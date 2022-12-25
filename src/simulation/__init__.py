@@ -1,2 +1,2 @@
-from .AssetSimulation import AssetSimulation
+from .MarketSimulation import MarketSimulation
 from .SimulationState import SimulationState

@@ -2,7 +2,7 @@ import sqlalchemy
 from lib.ShareGroups import ShareGroups
 from lib.tools.movingAverage import MovingAverage
 from simulation import SimulationState
-from simulation import AssetSimulation
+from simulation import MarketSimulation
 
 movingAverage = MovingAverage(10)
 portfolio = ShareGroups()
@@ -75,7 +75,7 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
 
 def start(engine: sqlalchemy.engine.Engine):
     with engine.connect() as db:
-        simulation = AssetSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
+        simulation = MarketSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
         simulation.setAction(simulate)
         simulation.start()
         print("Status", "${:,.2f}".format(cash))

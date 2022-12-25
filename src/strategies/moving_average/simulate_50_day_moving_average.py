@@ -3,7 +3,7 @@ from typing import Callable, List
 
 import sqlalchemy
 
-from simulation.AssetSimulation import AssetSimulation
+from simulation.MarketSimulation import MarketSimulation
 from simulation.MovingAverageSimulationBase import (
     MovingAverageSimulationBase,
 )
@@ -24,7 +24,7 @@ def _start(
         simulationBase = MovingAverageSimulationBase(
             MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL
         )
-        simulation = AssetSimulation(db, "2000-01-01", [ticker])
+        simulation = MarketSimulation(db, "2000-01-01", [ticker])
         simulation.setAction(simulationBase.simulate)
         # print(f"Simulating {ticker}")
         simulation.start()
@@ -50,7 +50,7 @@ def start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
         tickers = json.load(f)
 
     tickers = tickers[:100]
-    with ThreadPoolExecutor(10) as executor:
+    with ThreadPoolExecutor(1) as executor:
         result = executor.map(partial(_start, createConnection), tickers)
     # result = []
     # for ticker in tickers:

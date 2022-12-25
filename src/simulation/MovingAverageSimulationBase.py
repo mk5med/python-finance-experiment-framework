@@ -5,7 +5,7 @@ from lib.tools.movingAverage import MovingAverage
 from functools import partial
 from simulation import SimulationState
 import enum
-import SimulationBase
+import simulation.SimulationBase
 
 
 class LastActionEnum(enum.Enum):
@@ -14,7 +14,7 @@ class LastActionEnum(enum.Enum):
     sell = 1
 
 
-class MovingAverageSimulationBase(SimulationBase.SimulationBase):
+class MovingAverageSimulationBase(simulation.SimulationBase.SimulationBase):
     """
     The base logic for simulators using moving average calculations
     """
