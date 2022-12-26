@@ -21,9 +21,7 @@ def _start(
 ) -> pd.Series:
     engine = createConnection()
     with engine.connect() as db:
-        simulationBase = MovingAverageSimulation(
-            MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL
-        )
+        simulationBase = MovingAverageSimulation(MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL)
         simulation = MarketSimulation(db, "2000-01-01", [ticker])
         simulation.setAction(simulationBase.simulate)
         # print(f"Simulating {ticker}")
