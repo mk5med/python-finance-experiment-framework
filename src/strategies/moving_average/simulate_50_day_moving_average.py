@@ -4,8 +4,8 @@ from typing import Callable, List
 import sqlalchemy
 
 from simulation.MarketSimulation import MarketSimulation
-from simulation.MovingAverageSimulationBase import (
-    MovingAverageSimulationBase,
+from strategies.moving_average.MovingAverageSimulation import (
+    MovingAverageSimulation,
 )
 
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
@@ -21,7 +21,7 @@ def _start(
 ) -> pd.Series:
     engine = createConnection()
     with engine.connect() as db:
-        simulationBase = MovingAverageSimulationBase(
+        simulationBase = MovingAverageSimulation(
             MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL
         )
         simulation = MarketSimulation(db, "2000-01-01", [ticker])

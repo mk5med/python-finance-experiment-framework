@@ -14,7 +14,7 @@ class LastActionEnum(enum.Enum):
     sell = 1
 
 
-class MovingAverageSimulationBase(simulation.SimulationBase.SimulationBase):
+class MovingAverageSimulation(simulation.SimulationBase.SimulationBase):
     """
     The base logic for simulators using moving average calculations
     """

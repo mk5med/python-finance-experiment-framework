@@ -11,7 +11,6 @@ class SimulationState:
     def __init__(self, dbCon: sqlalchemy.engine.Connection, currentDate: str):
         self.currentDate = datetime.datetime.fromisoformat(currentDate)
         self.dbCon = dbCon
-        ...
 
     def getTickerPrice(self, ticker: str):
         datestr = str(self.currentDate.date())
