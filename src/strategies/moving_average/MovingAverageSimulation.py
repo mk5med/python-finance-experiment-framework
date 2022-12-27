@@ -1,11 +1,10 @@
 from datetime import datetime
 import typing
-from lib.ShareGroups import ShareGroups
+from lib.ShareGroupTransactionChain import ShareGroupTransactionChain
 from lib.tools.movingAverage import MovingAverage
 from functools import partial
 from simulation import SimulationState
 import enum
-import simulation.SimulationBase
 
 
 class LastActionEnum(enum.Enum):
@@ -14,7 +13,7 @@ class LastActionEnum(enum.Enum):
     sell = 1
 
 
-class MovingAverageSimulation(simulation.SimulationBase.SimulationBase):
+class MovingAverageSimulation:
     """
     The base logic for simulators using moving average calculations
     """
@@ -24,7 +23,7 @@ class MovingAverageSimulation(simulation.SimulationBase.SimulationBase):
 
         self.cash = self.initialCapital = initialCapital
         self.lastAction = LastActionEnum.nothing
-        self.portfolio = ShareGroups()
+        self.portfolio = ShareGroupTransactionChain()
         self.timeStart = datetime.now()
 
     def simulate(

@@ -3,9 +3,9 @@ import simulation.SimulationState as SimulationState
 import abc
 
 
-class SimulationBase(abc.ABC):
+class MarketSimulationEvent(abc.ABC):
     @abc.abstractmethod
-    def simulate(
+    def event(
         self,
         stopCallback: typing.Callable[[], None],
         simulationState: SimulationState,

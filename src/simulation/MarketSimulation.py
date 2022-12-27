@@ -2,6 +2,7 @@ import sqlite3
 from typing import List
 import typing
 from simulation.SimulationState import SimulationState
+from simulation.MarketSimulationEventBase import MarketSimulationEvent
 import sqlalchemy
 
 ActionCallbackTypeDef = typing.Callable[
@@ -32,6 +33,7 @@ class MarketSimulation:
         self.tickers = tickers
         self.simulationState = SimulationState(db, startTime)
         self.running = False
+        self._events: typing.List[MarketSimulationEvent] = []
 
     def setAction(
         self,
@@ -40,6 +42,10 @@ class MarketSimulation:
         self.actionCallback = actionCallback
 
     def nextDay(self) -> None:
+        # Loop through all events at the end of the day
+        for event in self._events:
+            event.event(self.stop, self.simulationState, self.tickers)
+
         self.simulationState.incrementDate()
 
     def stop(self) -> None:
@@ -59,3 +65,10 @@ class MarketSimulation:
                 self.nextDay()
             except:
                 self.stop()
+
+    def registerEvent(self, event: MarketSimulationEvent):
+        """
+        Add a new event
+        """
+        self._events.append(event)
+        return self

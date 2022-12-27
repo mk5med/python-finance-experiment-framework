@@ -1,11 +1,11 @@
 import sqlalchemy
-from lib.ShareGroups import ShareGroups
+from lib.ShareGroupTransactionChain import ShareGroupTransactionChain
 from lib.tools.movingAverage import MovingAverage
 from simulation import SimulationState
 from simulation import MarketSimulation
 
 movingAverage = MovingAverage(10)
-portfolio = ShareGroups()
+portfolio = ShareGroupTransactionChain()
 cash: float = 1000
 lastAction = 0
 

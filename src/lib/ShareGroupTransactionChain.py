@@ -8,7 +8,7 @@ from lib.typedefs import (
 )
 
 
-class ShareGroups:
+class ShareGroupTransactionChain:
     @staticmethod
     def fromSimpleChain(transactions: TransactionListTypeDef):
         """
@@ -17,7 +17,7 @@ class ShareGroups:
         >>> sg = ShareGroups.fromSimpleChain(transactions)
         """
 
-        shareGroups = ShareGroups()
+        shareGroups = ShareGroupTransactionChain()
         for transaction in transactions:
             assert transaction[1] != 0
 
@@ -71,7 +71,7 @@ class ShareGroups:
 
     @staticmethod
     def fromShareGroupChain(transactions: ShareGroupChainTypeDef):
-        shareGroups = ShareGroups()
+        shareGroups = ShareGroupTransactionChain()
         for transaction in transactions:
             if transaction[0] == "buy":
                 shareGroups.buy(transaction[1])
@@ -254,4 +254,4 @@ class ShareGroups:
 
 if __name__ == "__main__":
     transactions = [(1, 1), (4, 1), (3, -1)]
-    sg = ShareGroups.fromSimpleChain(transactions)
+    sg = ShareGroupTransactionChain.fromSimpleChain(transactions)
