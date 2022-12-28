@@ -4,7 +4,8 @@ import sqlalchemy
 import yfinance as yf
 from extra.ThreadPool import ThreadPool
 from extra.threadTypes import TaskType
-from simulation import SimulationState, MarketSimulation
+from lib.Portfolio import Portfolio
+from simulation import DividendEvent, SimulationState, MarketSimulation
 import queue
 
 taskQueue = typing.cast(TaskType, queue.Queue())
@@ -37,24 +38,33 @@ def simulate(
     # 3) For the dividend to come in it must be held until the ex-dividend date.
     #    where do we find the upcoming ex-dividend date?
 
-    print(simulationState.currentDate)
     for ticker in tickers[:5]:
-        taskQueue.put((simulationState.getTickerPrice, [ticker]))
-
-    taskQueue.join()
+        s = simulationState.getTickerPrice(ticker)
     ...
 
 
-def start(engine: sqlalchemy.engine.Engine) -> None:
+def start(createConnection: typing.Callable[[], sqlalchemy.engine.Engine]) -> None:
     global pool
     import json
 
+    engine = createConnection()
     with engine.connect() as db:
-        with open("./tickers.txt") as f:
+        with open("../tickers.txt") as f:
+            # Load all the tickers
             tickers = json.load(f)
-            simulation = MarketSimulation(db, "2022-01-01", tickers=tickers)
+            portfolio = Portfolio()
+            simulation = MarketSimulation(db, "2022-01-07", tickers=tickers)
+            simulation.simulationState.setPortfolio(portfolio=portfolio)
             simulation.setAction(simulate)
+            simulation.registerEvent(DividendEvent.DividendEvent())
 
-            pool.start()
+            simulation.simulationState.buy("INO-UN.TO", 100)
+            initCash = simulation.simulationState.getCash()
             simulation.start()
+            endCash = simulation.simulationState.getCash()
+            return {
+                "profit": endCash - initCash,
+                "sunkCost": initCash,
+                "roi": (endCash - initCash) / initCash,
+            }
             del pool

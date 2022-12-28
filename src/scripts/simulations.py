@@ -43,14 +43,11 @@ def createConnection() -> sqlalchemy.engine.Engine:
     return engine
 
 
-engine = createConnection()
-
-
-def _start(ticker: str) -> None:
+def _start(engine: sqlalchemy.engine.Engine, ticker: str) -> None:
     try:
         print(f"Processing {ticker}")
         with engine.connect() as db:
-            data = pd.read_csv(f"./historical_data/{ticker}.csv")
+            data = pd.read_csv(f"../historical_data/{ticker}.csv")
             data.to_sql(ticker, db)
     except Exception as e:
         print("Fail", e)
@@ -59,13 +56,12 @@ def _start(ticker: str) -> None:
 
 def seed() -> None:
     print("Seeding database")
-    with open("./tickers.txt") as f:
+
+    engine = createConnection()
+    with open("../tickers.txt") as f:
         tickers = json.load(f)
         with ThreadPoolExecutor(1) as executor:
-            result = executor.map(partial(_start), tickers)
-
-        # for i in result:
-        #     print(result)
+            result = executor.map(partial(_start, engine), tickers)
 
 
 def run_simulation(
@@ -77,11 +73,13 @@ def run_simulation(
     result = simulation(createConnection)
     end = time.time()
     print(result)
+
+    print(f"Duration: {end-start:.03f}s")
+    return None
+
     print(
         f"This strategy ranges from ${min(result['delta'])} to ${max(result['delta'])} in profit."
     )
-    print(f"Duration: {end-start:.03f}s")
-
     return pd.Series(
         {
             "strategyName": strategyName,
@@ -93,11 +91,6 @@ def run_simulation(
 
 
 def run_all_simulations():
-    # simulate_dividend_income_simulation.start(engine)
+    run_simulation("Dividend Income", simulate_dividend_income_simulation.start)
     # simulate_crypto_50_day_moving_average.start(engine)
-    run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)
-
-
-if __name__ == "__main__":
-    if "--seed" in argv:
-        seed()
+    # run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)

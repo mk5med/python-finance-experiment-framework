@@ -1,9 +1,9 @@
 import typing
-import MarketSimulationEventBase
+import simulation.MarketSimulationEventBase
 from simulation.SimulationState import SimulationState
 
 
-class DividendSimulationBase(MarketSimulationEventBase.MarketSimulationEvent):
+class DividendEvent(simulation.MarketSimulationEventBase.MarketSimulationEvent):
     def event(
         self,
         stopCallback: typing.Callable[[], None],

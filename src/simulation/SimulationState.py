@@ -57,3 +57,23 @@ class SimulationState:
 
     def setCash(self, cash: float):
         self._cash = cash
+
+    def buy(self, ticker: str, qty: float):
+        assert self.portfolio is not None
+        ref = self.portfolio.getTickerRef(ticker)
+        data = self.getTickerPrice(ticker)
+        if data is None:
+            raise Exception(
+                f"Asset is delisted or is not available at this time {self.currentDate}"
+            )
+
+        # Calculate the average price
+        price = data[2] + data[5] / 2
+        ref.transactions.buy((price, qty))
+        self._cash -= price * qty
+
+    def sell(self, ticker: str, qty: float):
+        assert self.portfolio is not None
+        ref = self.portfolio.getTickerRef(ticker)
+        data = self.getTickerPrice(ticker)
+        raise NotImplementedError("Not implemented yet")

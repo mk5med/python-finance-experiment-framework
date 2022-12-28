@@ -63,7 +63,8 @@ class MarketSimulation:
             self.actionCallback(self.stop, self.simulationState, self.tickers)
             try:
                 self.nextDay()
-            except:
+            except Exception as error:
+                print(error)
                 self.stop()
 
     def registerEvent(self, event: MarketSimulationEvent):

@@ -27,4 +27,3 @@ if __name__ == "__main__":
         scripts.simulations.seed()
     if args.simulations == True:
         scripts.simulations.run_all_simulations()
-        ...
