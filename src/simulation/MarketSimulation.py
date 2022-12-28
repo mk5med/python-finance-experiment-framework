@@ -31,7 +31,7 @@ class MarketSimulation:
             ActionCallbackTypeDef, None
         ] = lambda _1, _2, _3: None
         self.tickers = tickers
-        self.simulationState = SimulationState(db, startTime)
+        self.simulationState = SimulationState(db, startTime, self.tickers)
         self.running = False
         self._events: typing.List[MarketSimulationEvent] = []
 

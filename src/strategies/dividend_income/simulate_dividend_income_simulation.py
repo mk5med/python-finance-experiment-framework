@@ -37,9 +37,6 @@ def simulate(
     #   To account for fluctuations we will use the average between the open and close
     # 3) For the dividend to come in it must be held until the ex-dividend date.
     #    where do we find the upcoming ex-dividend date?
-
-    for ticker in tickers[:5]:
-        s = simulationState.getTickerPrice(ticker)
     ...
 
 
@@ -51,14 +48,26 @@ def start(createConnection: typing.Callable[[], sqlalchemy.engine.Engine]) -> No
     with engine.connect() as db:
         with open("../tickers.txt") as f:
             # Load all the tickers
-            tickers = json.load(f)
+            allTickers = json.load(f)
             portfolio = Portfolio()
-            simulation = MarketSimulation(db, "2022-01-07", tickers=tickers)
+            simulation = MarketSimulation(db, "2022-01-07", tickers=allTickers)
             simulation.simulationState.setPortfolio(portfolio=portfolio)
             simulation.setAction(simulate)
             simulation.registerEvent(DividendEvent.DividendEvent())
 
+            tickers = simulation.simulationState.getAvailableTickers()
+            for ticker in tickers:
+                dData = simulation.simulationState.getDividendData(ticker)
+                if len(dData) == 0:
+                    continue
+
+                print(ticker, dData[-1])
+                ...
+            print()
+            return
             simulation.simulationState.buy("INO-UN.TO", 100)
+            # simulation.simulationState.buy("TRL.TO", 1000)
+
             initCash = simulation.simulationState.getCash()
             simulation.start()
             endCash = simulation.simulationState.getCash()

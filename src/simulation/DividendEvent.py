@@ -16,12 +16,12 @@ class DividendEvent(simulation.MarketSimulationEventBase.MarketSimulationEvent):
         # 4. Continue
         revenue = 0
         # Loop through all assets in the portfolio
-        for tickerName in simulationState.portfolio.tickers:
+        for tickerName in simulationState._portfolio.tickers:
             data = simulationState.getDividendData(tickerName)
 
             # If the ex-dividend date is the current day
             if data.keys()[-1] == simulationState.currentDate:
-                ticker = simulationState.portfolio.tickers[tickerName]
+                ticker = simulationState._portfolio.tickers[tickerName]
                 owned = ticker.transactions.ownedStocks()
 
                 # Record the revenue event

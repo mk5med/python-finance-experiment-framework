@@ -1,8 +1,10 @@
 import datetime
-import sqlite3
+import typing
 import sqlalchemy
 import yfinance as yf
 from lib.Portfolio import Portfolio
+import os
+import pandas as pd
 
 TICKERS = {}
 
@@ -12,15 +14,20 @@ class SimulationState:
     Contains the immutable state of a simulation at a moment in time
     """
 
-    def __init__(self, dbCon: sqlalchemy.engine.Connection, currentDate: str):
+    def __init__(
+        self,
+        dbCon: sqlalchemy.engine.Connection,
+        currentDate: str,
+        tickers: typing.List[str],
+    ):
         self.currentDate = datetime.datetime.fromisoformat(currentDate)
         self.dbCon = dbCon
-        self.portfolio = None
+        self._portfolio = None
         self._cash = 0
+        self._tickers = tickers
 
     def setPortfolio(self, portfolio: Portfolio):
-        self.portfolio = portfolio
-        ...
+        self._portfolio = portfolio
 
     def getTickerPrice(self, ticker: str):
         datestr = str(self.currentDate.date())
@@ -38,11 +45,50 @@ class SimulationState:
                 cursor.close()
             raise error
 
+    def getAvailableTickers(self):
+        datestr = str(self.currentDate.date())
+        try:
+            data = []
+            for ticker in self._tickers:
+                res = self.dbCon.execute(
+                    f'select * from "{ticker}" where "Date" = \'{datestr}\''
+                )
+                result = res.fetchone()
+                if result is not None:
+                    data.append(ticker)
+
+            return data
+        except Exception as error:
+            if self.dbCon is not None:
+                self.dbCon.close()
+            raise error
+
     def getDividendData(self, ticker: str):
         if ticker not in TICKERS:  # Cache the record
             TICKERS[ticker] = yf.Ticker(ticker)
+
         t = TICKERS[ticker]
-        dividends = t.get_dividends()
+        dividends = None
+
+        if not os.path.isfile(f"../historical_dividends/{ticker}-dividend-info.csv"):
+            dividends = t.get_dividends()
+            if type(dividends) != list:
+                dividends.to_csv(f"../historical_dividends/{ticker}-dividend-info.csv")
+            else:
+                # TODO: Code reuse
+                dividends = pd.DataFrame({"Date": [], "Dividends": []})
+                dividends.to_csv(
+                    f"../historical_dividends/{ticker}-dividend-info.csv", index=None
+                )
+
+        else:
+            dividends = pd.read_csv(
+                f"../historical_dividends/{ticker}-dividend-info.csv", index_col=0
+            )
+            dividends = dividends.squeeze(1)
+
+        if len(dividends) == 0:
+            return dividends
         return dividends[dividends.keys() <= self.currentDate.isoformat()]
 
     def incrementDate(self):
@@ -59,8 +105,8 @@ class SimulationState:
         self._cash = cash
 
     def buy(self, ticker: str, qty: float):
-        assert self.portfolio is not None
-        ref = self.portfolio.getTickerRef(ticker)
+        assert self._portfolio is not None
+        ref = self._portfolio.getTickerRef(ticker)
         data = self.getTickerPrice(ticker)
         if data is None:
             raise Exception(
@@ -73,7 +119,7 @@ class SimulationState:
         self._cash -= price * qty
 
     def sell(self, ticker: str, qty: float):
-        assert self.portfolio is not None
-        ref = self.portfolio.getTickerRef(ticker)
+        assert self._portfolio is not None
+        ref = self._portfolio.getTickerRef(ticker)
         data = self.getTickerPrice(ticker)
         raise NotImplementedError("Not implemented yet")
