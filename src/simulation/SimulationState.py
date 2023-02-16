@@ -7,6 +7,7 @@ import os
 import pandas as pd
 
 TICKERS = {}
+DIVIDENDS = {}
 
 
 class SimulationState:
@@ -45,10 +46,10 @@ class SimulationState:
                 cursor.close()
             raise error
 
-    def getAvailableTickers(self):
+    def getAvailableTickers(self) -> typing.List[str]:
         datestr = str(self.currentDate.date())
         try:
-            data = []
+            data: typing.List[str] = []
             for ticker in self._tickers:
                 res = self.dbCon.execute(
                     f'select * from "{ticker}" where "Date" = \'{datestr}\''
@@ -69,23 +70,33 @@ class SimulationState:
 
         t = TICKERS[ticker]
         dividends = None
+        if ticker not in DIVIDENDS:
+            # Cache the dividend information to memory
+            if not os.path.isfile(
+                f"../historical_dividends/{ticker}-dividend-info.csv"
+            ):
+                dividends = t.get_dividends()
+                if type(dividends) != list:
+                    dividends.to_csv(
+                        f"../historical_dividends/{ticker}-dividend-info.csv"
+                    )
+                else:
+                    # TODO: Code reuse
+                    dividends = pd.DataFrame({"Date": [], "Dividends": []})
+                    dividends.to_csv(
+                        f"../historical_dividends/{ticker}-dividend-info.csv",
+                        index=None,
+                    )
 
-        if not os.path.isfile(f"../historical_dividends/{ticker}-dividend-info.csv"):
-            dividends = t.get_dividends()
-            if type(dividends) != list:
-                dividends.to_csv(f"../historical_dividends/{ticker}-dividend-info.csv")
             else:
-                # TODO: Code reuse
-                dividends = pd.DataFrame({"Date": [], "Dividends": []})
-                dividends.to_csv(
-                    f"../historical_dividends/{ticker}-dividend-info.csv", index=None
+                dividends = pd.read_csv(
+                    f"../historical_dividends/{ticker}-dividend-info.csv", index_col=0
                 )
-
+                dividends = dividends.squeeze(1)
+            DIVIDENDS[ticker] = dividends
         else:
-            dividends = pd.read_csv(
-                f"../historical_dividends/{ticker}-dividend-info.csv", index_col=0
-            )
-            dividends = dividends.squeeze(1)
+            # Restore cached dividend information
+            dividends = DIVIDENDS[ticker]
 
         if len(dividends) == 0:
             return dividends

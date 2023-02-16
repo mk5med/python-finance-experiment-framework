@@ -4,6 +4,7 @@ import typing
 from simulation.SimulationState import SimulationState
 from simulation.MarketSimulationEventBase import MarketSimulationEvent
 import sqlalchemy
+import traceback
 
 ActionCallbackTypeDef = typing.Callable[
     [typing.Callable[[], None], SimulationState, List[str]], None
@@ -39,9 +40,16 @@ class MarketSimulation:
         self,
         actionCallback: ActionCallbackTypeDef,
     ) -> None:
+        """
+        Set the action callback. The action callback is invoked for every new simulation state
+        """
         self.actionCallback = actionCallback
 
     def nextDay(self) -> None:
+        """
+        Move the simulation to the next day
+        Runs all events at the end of the day before updating state
+        """
         # Loop through all events at the end of the day
         for event in self._events:
             event.event(self.stop, self.simulationState, self.tickers)
@@ -49,9 +57,15 @@ class MarketSimulation:
         self.simulationState.incrementDate()
 
     def stop(self) -> None:
+        """
+        Stop the simulation
+        """
         self.running = False
 
     def start(self) -> None:
+        """
+        Start the simulation
+        """
         if self.actionCallback is None:
             raise Exception("actionCallback cannot be null")
         # Should ideally support displaying visuals with plotly
@@ -64,7 +78,8 @@ class MarketSimulation:
             try:
                 self.nextDay()
             except Exception as error:
-                print(error)
+
+                # traceback.print_exception(error)
                 self.stop()
 
     def registerEvent(self, event: MarketSimulationEvent):

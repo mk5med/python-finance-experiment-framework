@@ -19,6 +19,7 @@ import sqlite3
 import psycopg2
 import sqlalchemy
 import time
+import logging
 
 
 def __createPostgresConnection() -> sqlalchemy.engine.Engine:
@@ -70,6 +71,7 @@ def run_simulation(
 ):
 
     start = time.time()
+    print(f"{'-' * 5} Simulation: {strategyName} {'-' * 5}")
     result = simulation(createConnection)
     end = time.time()
     print(result)
