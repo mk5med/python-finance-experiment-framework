@@ -64,43 +64,63 @@ class SimulationState:
                 self.dbCon.close()
             raise error
 
-    def getDividendData(self, ticker: str):
-        if ticker not in TICKERS:  # Cache the record
-            TICKERS[ticker] = yf.Ticker(ticker)
+    def getDividendData(self, tickerName: str):
+        if tickerName not in TICKERS:  # Cache the record
+            TICKERS[tickerName] = yf.Ticker(tickerName)
 
-        t = TICKERS[ticker]
+        ticker = TICKERS[tickerName]
         dividends = None
-        if ticker not in DIVIDENDS:
-            # Cache the dividend information to memory
-            if not os.path.isfile(
-                f"../historical_dividends/{ticker}-dividend-info.csv"
-            ):
-                dividends = t.get_dividends()
-                if type(dividends) != list:
-                    dividends.to_csv(
-                        f"../historical_dividends/{ticker}-dividend-info.csv"
-                    )
-                else:
-                    # TODO: Code reuse
-                    dividends = pd.DataFrame({"Date": [], "Dividends": []})
-                    dividends.to_csv(
-                        f"../historical_dividends/{ticker}-dividend-info.csv",
-                        index=None,
-                    )
+        if tickerName not in DIVIDENDS:
+            # A saved version of dividend information was not found
+            dividends = self.__getLatestOrSavedDividends(tickerName, ticker)
 
-            else:
-                dividends = pd.read_csv(
-                    f"../historical_dividends/{ticker}-dividend-info.csv", index_col=0
-                )
-                dividends = dividends.squeeze(1)
-            DIVIDENDS[ticker] = dividends
+            # Cache the dividend information
+            DIVIDENDS[tickerName] = dividends
         else:
             # Restore cached dividend information
-            dividends = DIVIDENDS[ticker]
+            dividends = DIVIDENDS[tickerName]
 
+        # Return if there are no dividends for this asset
         if len(dividends) == 0:
             return dividends
+
+        # Filter dividends to dates less than or equal to the current date
+        # The simulation cannot look into the future
         return dividends[dividends.keys() <= self.currentDate.isoformat()]
+
+    def __getLatestOrSavedDividends(self, tickerName: str, ticker: yf.Ticker):
+        """
+        Gets dividends for a Ticker.
+
+        If a ticker has been previously cached to the file system it will read from the saved file.
+
+        If a ticker has not been previously cached it will fetch the latest dividend
+        information from yahoo finance and save the results to a file in `../historical_dividends`.
+        """
+        fName = f"../historical_dividends/{tickerName}-dividend-info.csv"
+
+        # Has the ticker been previously cached
+        if not os.path.isfile(fName):
+
+            # Get the latest dividend informatoin
+            dividends = ticker.get_dividends()
+
+            # The result can be a dataframe
+            if type(dividends) != list:
+                dividends.to_csv(fName)
+                # Or a list
+            else:
+                # TODO: Code reuse
+                dividends = pd.DataFrame({"Date": [], "Dividends": []})
+                dividends.to_csv(
+                    fName,
+                    index=None,
+                )
+            # The file was found
+        else:
+            dividends = pd.read_csv(fName, index_col=0)
+            dividends = dividends.squeeze(1)
+        return dividends
 
     def incrementDate(self):
         self.currentDate += datetime.timedelta(days=1)

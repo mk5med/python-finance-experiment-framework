@@ -5,8 +5,10 @@ import yfinance as yf
 from extra.ThreadPool import ThreadPool
 from extra.threadTypes import TaskType
 from lib.Portfolio import Portfolio
-from simulation import DividendEvent, SimulationState, MarketSimulation
+from simulation import SimulationState, MarketSimulation
 import queue
+
+from simulation.events import DividendEvent
 
 taskQueue = typing.cast(TaskType, queue.Queue())
 resultQueue: "queue.Queue[typing.Any]" = queue.Queue()
@@ -45,35 +47,57 @@ def start(createConnection: typing.Callable[[], sqlalchemy.engine.Engine]) -> No
     import json
 
     engine = createConnection()
+    DIVIDEND_YIELD = 0.1
+
     with engine.connect() as db:
         with open("../tickers.txt") as f:
             # Load all the tickers
             allTickers = json.load(f)
             portfolio = Portfolio()
-            simulation = MarketSimulation(db, "2022-01-07", tickers=allTickers)
+            simulation = MarketSimulation(db, "2019-01-07", tickers=allTickers)
             simulation.simulationState.setPortfolio(portfolio=portfolio)
             simulation.setAction(simulate)
+
+            # Listen for dividend events
             simulation.registerEvent(DividendEvent.DividendEvent())
 
+            print("Initialising experiment portfolio")
             tickers = simulation.simulationState.getAvailableTickers()
+
             for ticker in tickers:
                 dData = simulation.simulationState.getDividendData(ticker)
+
+                # Skip if there is no dividend data
                 if len(dData) == 0:
                     continue
 
-                print(ticker, dData[-1])
-                ...
-            print()
-            return
-            simulation.simulationState.buy("INO-UN.TO", 100)
-            # simulation.simulationState.buy("TRL.TO", 1000)
+                # # Skip TRL
+                # if "TRL" in ticker:
+                #     continue
 
-            initCash = simulation.simulationState.getCash()
+                data = simulation.simulationState.getTickerPrice(ticker)
+                price = data[5]
+                lastDividend = dData[-1]
+
+                dividendYield = lastDividend / price
+                # If the yield is greater than or equal to the DIVIDEND_YIELD
+                if dividendYield >= DIVIDEND_YIELD:
+                    simulation.simulationState.buy(ticker, 1)
+
+            print(f"Found {len([i for i in portfolio.tickers])} assets")
+            print("Started market simulation")
+
+            # Get the amount paid to initialize the portfolio
+            initialisationCost = abs(simulation.simulationState.getCash())
+
+            # Reset cash to 0
+            simulation.simulationState.setCash(0)
+
             simulation.start()
             endCash = simulation.simulationState.getCash()
+
             return {
-                "profit": endCash - initCash,
-                "sunkCost": initCash,
-                "roi": (endCash - initCash) / initCash,
+                "profit": endCash,
+                "sunkCost": initialisationCost,
+                "roi": endCash / initialisationCost,
             }
-            del pool
