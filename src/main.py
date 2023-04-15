@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--seed",
-        help="Run all simulations",
+        help="Seed simulations",
         action="store_const",
         dest="simulation_seed",
         const=True,
