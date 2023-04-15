@@ -11,3 +11,4 @@ raw/
 
 # Data
 tickers.txt
+.DS_Store
