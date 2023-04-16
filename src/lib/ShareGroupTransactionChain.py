@@ -6,6 +6,7 @@ from lib.typedefs import (
     TransactionTypeDef,
     ShareGroupChainTypeDef,
 )
+from datetime import datetime
 
 
 class ShareGroupTransactionChain:
@@ -85,7 +86,11 @@ class ShareGroupTransactionChain:
         self.groups: typing.Dict[float, float] = {}
         self.shareGroupTransactionChain: ShareGroupChainTypeDef = []
 
-    def buy(self, transaction: TransactionTypeDef) -> float:
+    def buy(
+        self,
+        transaction: TransactionTypeDef,
+        currentTime: typing.Union[None, datetime] = None,
+    ) -> float:
         """
         Register a buy order for the asset. Transaction is a tuple containing (Price, Quantity)
         >>> ShareGroups().buy((0.5,2))
@@ -104,11 +109,17 @@ class ShareGroupTransactionChain:
 
         # Record the transaction
         self.simpleTransactions.buy(transaction)
+
+        # If the time of the transaction is ommitted, default to using the current time
+        if currentTime == None:
+            currentTime = datetime.now()
+
         self.shareGroupTransactionChain.append(
             (
                 "buy",
                 transaction,
-            )
+                currentTime,
+            ),
         )
 
         # Return the final cost
@@ -157,7 +168,11 @@ class ShareGroupTransactionChain:
         self.shareGroupTransactionChain.append(("sell", transaction, breakDown))
         return totalPrice
 
-    def sell_single(self, transaction: TransactionTypeDef):
+    def sell_single(
+        self,
+        transaction: TransactionTypeDef,
+        currentTime: typing.Union[None, datetime] = None,
+    ):
         """
         Sell (price, qty)
         """
@@ -168,7 +183,12 @@ class ShareGroupTransactionChain:
         )  # Check that the referenced tranche has enough quantity to be sold
         self.groups[price] -= qty
         self.simpleTransactions.sell(transaction)
-        self.shareGroupTransactionChain.append(("sell", transaction))
+
+        # Set the current time manually if it was not included
+        if currentTime == None:
+            currentTime = datetime.now()
+
+        self.shareGroupTransactionChain.append(("sell", transaction, currentTime))
         return price
 
     def maximumProfitAtPrice(self, possiblePrice: float):
@@ -179,15 +199,15 @@ class ShareGroupTransactionChain:
         Will always return a profit of 0 or higher
         """
         # Find all groups that have a positive return at the possible price
-        positiveGroups = list(
+        positivePriceGroups = list(
             filter(
                 lambda price: price < possiblePrice and self.groups[price] > 0,
                 [price for price in self.groups],
             )
         )
-        shareGroups = [(i, self.groups[i]) for i in positiveGroups]
+        shareGroups = [(price, self.groups[price]) for price in positivePriceGroups]
         profits: float = 0
-        for i in positiveGroups:
+        for i in positivePriceGroups:
             profits += self.groups[i] * (possiblePrice - i)
 
         return (profits, shareGroups)

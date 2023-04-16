@@ -11,6 +11,7 @@ class LastActionEnum(enum.Enum):
     nothing = 0
     buy = -1
     sell = 1
+    holding = 2
 
 
 class MovingAverageSimulation:
@@ -18,13 +19,16 @@ class MovingAverageSimulation:
     The base logic for simulators using moving average calculations
     """
 
-    def __init__(self, movingAverageWindow: int, initialCapital: float = 1000) -> None:
+    def __init__(
+        self, *, movingAverageWindow: int, initialCapital: float = 1000
+    ) -> None:
         self.movingAverage = MovingAverage(movingAverageWindow)
 
         self.cash = self.initialCapital = initialCapital
         self.lastAction = LastActionEnum.nothing
         self.portfolio = ShareGroupTransactionChain()
         self.timeStart = datetime.now()
+        self.events = []
 
     def simulate(
         self,
@@ -43,58 +47,68 @@ class MovingAverageSimulation:
             return
 
         (index, date, openPrice, high, low, closePrice, adjClose, volume) = price
-        if (datetime.now() - self.timeStart).seconds // 60 >= 1:
-            self.timeStart = datetime.now()
-            print(tickers, date)
 
         # Normalize the price for the day
         adjustedPrice: float = (openPrice + closePrice) / 2
         historicalAveragePrice = self.movingAverage.average()
 
         self.movingAverage.addData(adjustedPrice)
-        if historicalAveragePrice == -1:
+        if (
+            historicalAveragePrice == -1
+            or len(self.movingAverage.values) < self.movingAverage.maxLength
+        ):
             # No average available
             return
 
-        # If the price is greater than the historical average
-        if adjustedPrice > historicalAveragePrice:
-            # Exit if the last action was a buy action
-            if self.lastAction == LastActionEnum.buy:
-                return
-
+        if self.lastAction != LastActionEnum.holding and (
+            # If the price is greater than the historical average
+            adjustedPrice
+            > historicalAveragePrice
+        ):
             # Make the transaction and remove the cash
-            self.cash -= self.__buyAction(simulationState, adjustedPrice)
+            _ns = self.__buyAction(simulationState, adjustedPrice)
+            self.cash -= _ns[0]
 
             # Mark that a buy action was made
-            self.lastAction = LastActionEnum.buy
-        else:
-            # Make the transaction and add the cash
-            self.cash += self.__sellAction(simulationState, adjustedPrice)
+            self.lastAction = _ns[1]
 
+        elif (
+            self.lastAction == LastActionEnum.holding
+            and adjustedPrice < historicalAveragePrice
+        ):
+            # Make the transaction and add the cash
+            _ns = self.__sellAction(simulationState, adjustedPrice)
+            if _ns[1] == LastActionEnum.holding:
+                return
+
+            self.cash += _ns[0]
             # Mark that a sell action was made
-            self.lastAction = LastActionEnum.sell
+            self.lastAction = _ns[1]
 
     def __buyAction(self, simulationState: SimulationState, price: float) -> float:
         if self.cash < price:
-            return 0
+            return (0, self.lastAction)
 
         # Buy
-        cost = self.portfolio.buy((price, 1))
-
-        return cost
+        # print("buy")
+        return (
+            self.portfolio.buy((price, 1), simulationState.currentDate),
+            LastActionEnum.holding,
+        )
 
     def __sellAction(self, simulationState: SimulationState, price: float) -> None:
         # Able to sell
         if self.portfolio.ownedStocks() == 0:
-            return 0
+            return (0, self.lastAction)
 
         (profit, shareGroups) = self.portfolio.maximumProfitAtPrice(price)
 
         # Reason to sell
         if profit == 0:
-            return 0
+            return (0, self.lastAction)
 
         for shareGroup in shareGroups:
-            self.portfolio.sell_single(shareGroup)
+            self.portfolio.sell_single(shareGroup, simulationState.currentDate)
 
-        return profit
+        # print("sell")
+        return (len(shareGroups) * price, LastActionEnum.sell, profit)

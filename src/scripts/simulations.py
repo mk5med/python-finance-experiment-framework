@@ -93,6 +93,6 @@ def run_simulation(
 
 
 def run_all_simulations():
-    run_simulation("Dividend Income", simulate_dividend_income_simulation.start)
+    # run_simulation("Dividend Income", simulate_dividend_income_simulation.start)
     # simulate_crypto_50_day_moving_average.start(engine)
-    # run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)
+    run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)

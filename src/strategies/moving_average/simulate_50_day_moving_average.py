@@ -21,14 +21,16 @@ def _start(
 ) -> pd.Series:
     engine = createConnection()
     with engine.connect() as db:
-        simulationBase = MovingAverageSimulation(MOVING_AVERAGE_WINDOW, INITIAL_CAPITAL)
-        simulation = MarketSimulation(db, "2000-01-01", [ticker])
+        simulationBase = MovingAverageSimulation(
+            movingAverageWindow=MOVING_AVERAGE_WINDOW, initialCapital=INITIAL_CAPITAL
+        )
+        simulation = MarketSimulation(db, "2019-01-01", [ticker])
         simulation.setAction(simulationBase.simulate)
         simulation.start()  # Run the simulation
 
         # Print the results
         print(
-            f"Ticker {ticker}: ${simulationBase.initialCapital} -> ${simulationBase.cash} => ${simulationBase.cash - simulationBase.initialCapital}"
+            f"Ticker {ticker}: ${simulationBase.initialCapital} -> ${simulationBase.cash} => ${simulationBase.cash - simulationBase.initialCapital} {simulationBase.lastAction}"
         )
 
         # Return a summary of the results
@@ -45,7 +47,7 @@ def _start(
 
 def start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
     tickers = None
-    with open("./tickers.txt") as f:
+    with open("../tickers.txt") as f:
         tickers = json.load(f)
 
     tickers = tickers[:100]
