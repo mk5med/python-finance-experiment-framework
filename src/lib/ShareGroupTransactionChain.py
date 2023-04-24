@@ -172,6 +172,7 @@ class ShareGroupTransactionChain:
         self,
         transaction: TransactionTypeDef,
         currentTime: typing.Union[None, datetime] = None,
+        currPrice: float = 0,
     ):
         """
         Sell (price, qty)

@@ -14,6 +14,23 @@ class LastActionEnum(enum.Enum):
     holding = 2
 
 
+class ProfitEvent:
+    def __init__(
+        self,
+        *,
+        dateBought: datetime,
+        dateSold: datetime,
+        qty: float,
+        priceBought: float,
+        priceSold: float
+    ):
+        self.dateBought = dateBought
+        self.dateSold = dateSold
+        self.qty = qty
+        self.priceBought = priceBought
+        self.priceSold = priceSold
+
+
 class MovingAverageSimulation:
     """
     The base logic for simulators using moving average calculations
@@ -28,7 +45,10 @@ class MovingAverageSimulation:
         self.lastAction = LastActionEnum.nothing
         self.portfolio = ShareGroupTransactionChain()
         self.timeStart = datetime.now()
-        self.events = []
+        self.events: typing.List[ProfitEvent] = []
+
+        self.dateBought = datetime.now()
+        self.priceBought = 0
 
     def simulate(
         self,
@@ -65,6 +85,7 @@ class MovingAverageSimulation:
             adjustedPrice
             > historicalAveragePrice
         ):
+
             # Make the transaction and remove the cash
             _ns = self.__buyAction(simulationState, adjustedPrice)
             self.cash -= _ns[0]
@@ -89,8 +110,10 @@ class MovingAverageSimulation:
         if self.cash < price:
             return (0, self.lastAction)
 
+        self.dateBought = simulationState.currentDate
+        self.priceBought = price
+
         # Buy
-        # print("buy")
         return (
             self.portfolio.buy((price, 1), simulationState.currentDate),
             LastActionEnum.holding,
@@ -108,7 +131,17 @@ class MovingAverageSimulation:
             return (0, self.lastAction)
 
         for shareGroup in shareGroups:
-            self.portfolio.sell_single(shareGroup, simulationState.currentDate)
+            self.portfolio.sell_single(shareGroup, simulationState.currentDate, price)
+
+        self.events.append(
+            ProfitEvent(
+                dateBought=self.dateBought,
+                dateSold=simulationState.currentDate,
+                qty=len(shareGroups),
+                priceBought=self.priceBought,
+                priceSold=price,
+            )
+        )
 
         # print("sell")
         return (len(shareGroups) * price, LastActionEnum.sell, profit)

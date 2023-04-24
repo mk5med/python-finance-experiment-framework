@@ -10,6 +10,7 @@ class PortfolioTicker:
 
 class Portfolio:
     def __init__(self) -> None:
+        raise DeprecationWarning("Not implemented")
         self.tickers: typing.Dict[str, PortfolioTicker] = {}
         ...
 

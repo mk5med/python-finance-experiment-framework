@@ -65,34 +65,27 @@ def seed() -> None:
             result = executor.map(partial(_start, engine), tickers)
 
 
-def run_simulation(
+def run_strategy(
     strategyName: str,
     simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame],
 ):
-
+    # Start the timer
     start = time.time()
     print(f"{'-' * 5} Simulation: {strategyName} {'-' * 5}")
     result = simulation(createConnection)
+
+    # End the timer
     end = time.time()
-    print(result)
-
     print(f"Duration: {end-start:.03f}s")
-    return None
 
-    print(
-        f"This strategy ranges from ${min(result['delta'])} to ${max(result['delta'])} in profit."
-    )
-    return pd.Series(
-        {
-            "strategyName": strategyName,
-            "duration": end - start,
-            "range_min": min(result["delta"]),
-            "range_max": max(result["delta"]),
-        }
-    )
+    result["strategyName"] = strategyName
+    result["duration"] = end - start
+
+    print(result)
+    return result
 
 
-def run_all_simulations():
+def run_all_strategies():
     # run_simulation("Dividend Income", simulate_dividend_income_simulation.start)
     # simulate_crypto_50_day_moving_average.start(engine)
-    run_simulation("50-day moving average. CAD", simulate_50_day_moving_average.start)
+    run_strategy("50-day moving average. CAD", simulate_50_day_moving_average.start)

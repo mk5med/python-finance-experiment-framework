@@ -1,0 +1,3 @@
+class MarketSimulationAnalysis:
+    def __init__(self, *, simulationBase: any):
+        ...

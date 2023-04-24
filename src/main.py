@@ -1,5 +1,5 @@
 import argparse
-import scripts.simulations
+import scripts.strategyInvoker
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -24,6 +24,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     print(args)
     if args.simulation_seed:
-        scripts.simulations.seed()
+        scripts.strategyInvoker.seed()
     if args.simulations == True:
-        scripts.simulations.run_all_simulations()
+        scripts.strategyInvoker.run_all_strategies()

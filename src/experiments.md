@@ -6,6 +6,7 @@ This document lists experiments to run. The format is:
 
 ## Experiment 1: How much yield does a 50 day moving average give?
 Question: How much yield does a 50 day moving average give?
+
 Method of test:
 1. Run a 50 day moving average simulation on many tickers
 2. Record the profits for each profit event
