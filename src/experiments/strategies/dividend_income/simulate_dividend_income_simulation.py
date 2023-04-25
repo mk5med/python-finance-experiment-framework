@@ -1,10 +1,10 @@
 import typing
 import sqlalchemy
-from lib.Portfolio import Portfolio
-from simulation import SimulationState, MarketSimulation
+from core.lib.Portfolio import Portfolio
+from core.simulation import SimulationState, MarketSimulation
 from functools import partial
 
-from simulation.events import DividendEvent
+from core.simulation.events import DividendEvent
 
 
 def simulate(

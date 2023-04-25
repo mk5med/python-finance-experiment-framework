@@ -1,5 +1,5 @@
 import typing
-from lib.financeLib import (
+from core.lib.financeLib import (
     netAssetReturn,
     netWorth,
     ownedStocks,
@@ -8,7 +8,7 @@ from lib.financeLib import (
     transaction_buy,
     transaction_sell,
 )
-from lib.typedefs import TransactionTypeDef
+from core.lib.typedefs import TransactionTypeDef
 
 
 class SimpleTransactionChain:

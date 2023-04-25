@@ -1,8 +1,8 @@
 import sqlite3
 from typing import List
 import typing
-from simulation.SimulationState import SimulationState
-from simulation.MarketSimulationEventBase import MarketSimulationEvent
+from core.simulation.SimulationState import SimulationState
+from core.simulation.MarketSimulationEventBase import MarketSimulationEvent
 import sqlalchemy
 import traceback
 

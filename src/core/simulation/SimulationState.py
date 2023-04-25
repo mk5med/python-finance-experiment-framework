@@ -2,7 +2,7 @@ import datetime
 import typing
 import sqlalchemy
 import yfinance as yf
-from lib.Portfolio import Portfolio
+from core.lib.Portfolio import Portfolio
 import os
 import pandas as pd
 

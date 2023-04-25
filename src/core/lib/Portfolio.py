@@ -1,11 +1,11 @@
-import lib.ShareGroupTransactionChain
+import core.lib.ShareGroupTransactionChain
 import typing
 
 
 class PortfolioTicker:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.transactions = lib.ShareGroupTransactionChain.ShareGroupTransactionChain()
+        self.transactions = core.lib.ShareGroupTransactionChain.ShareGroupTransactionChain()
 
 
 class Portfolio:

@@ -2,10 +2,10 @@ import json
 from typing import Callable, List
 
 import sqlalchemy
-from helpers.prettyFromToProfitPrint import printFromToProfit
+from core.helpers.prettyFromToProfitPrint import printFromToProfit
 
-from simulation.MarketSimulation import MarketSimulation
-from strategies.moving_average.MovingAverageSimulation import (
+from core.simulation.MarketSimulation import MarketSimulation
+from experiments.strategies.moving_average.MovingAverageSimulation import (
     MovingAverageSimulation,
 )
 
@@ -13,7 +13,7 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
 import pandas as pd
 
-from strategies.moving_average.analyseResults import analyseResults
+from experiments.strategies.moving_average.analyseResults import analyseResults
 
 INITIAL_CAPITAL = 1000
 MOVING_AVERAGE_WINDOW = 50

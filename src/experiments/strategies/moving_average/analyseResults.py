@@ -2,10 +2,10 @@ import json
 from typing import Callable, List
 
 import sqlalchemy
-from helpers.prettyFromToProfitPrint import printFromToProfit
+from core.helpers.prettyFromToProfitPrint import printFromToProfit
 
-from simulation.MarketSimulation import MarketSimulation
-from strategies.moving_average.MovingAverageSimulation import (
+from core.simulation.MarketSimulation import MarketSimulation
+from experiments.strategies.moving_average.MovingAverageSimulation import (
     MovingAverageSimulation,
 )
 

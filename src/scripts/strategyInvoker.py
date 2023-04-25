@@ -8,11 +8,11 @@ from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 from sys import argv
 from typing import Callable
-from strategies.dividend_income import simulate_dividend_income_simulation
-from strategies.crypto import (
+from experiments.strategies.dividend_income import simulate_dividend_income_simulation
+from experiments.strategies.crypto import (
     simulate_day_50_moving_average as simulate_crypto_50_day_moving_average,
 )
-from strategies.moving_average import simulate_50_day_moving_average
+from experiments.strategies.moving_average import simulate_50_day_moving_average
 import json
 import pandas as pd
 import sqlite3

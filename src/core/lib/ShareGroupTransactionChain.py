@@ -1,7 +1,7 @@
-from lib.SimpleTransactionChain import SimpleTransactionChain
+from core.lib.SimpleTransactionChain import SimpleTransactionChain
 import math
 import typing
-from lib.typedefs import (
+from core.lib.typedefs import (
     TransactionListTypeDef,
     TransactionTypeDef,
     ShareGroupChainTypeDef,

@@ -1,8 +1,8 @@
 import sqlalchemy
-from lib.ShareGroupTransactionChain import ShareGroupTransactionChain
-from lib.tools.movingAverage import MovingAverage
-from simulation import SimulationState
-from simulation import MarketSimulation
+from core.lib.ShareGroupTransactionChain import ShareGroupTransactionChain
+from core.lib.tools.movingAverage import MovingAverage
+from core.simulation import SimulationState
+from core.simulation import MarketSimulation
 
 movingAverage = MovingAverage(10)
 portfolio = ShareGroupTransactionChain()
