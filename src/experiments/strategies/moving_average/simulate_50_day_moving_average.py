@@ -60,7 +60,7 @@ def __runSimulationOnTickers(
 
 
 def __start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
-    tickers = __getTickers(5)
+    tickers = __getTickers()
     results = __runSimulationOnTickers(createConnection, tickers)
 
     _r = []

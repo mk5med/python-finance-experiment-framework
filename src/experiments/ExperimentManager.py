@@ -6,6 +6,9 @@ import traceback
 import os
 import os.path
 import pandas as pd
+import glob
+
+BASE_CACHE_NAME = ".cache/experiment"
 
 
 class ExperimentManager:
@@ -29,7 +32,7 @@ class ExperimentManager:
 
     def __cacheWrapper(self, experiment: Experiment, experimentPath: str):
         # Skip caching
-        if experiment.shouldCache:
+        if not experiment.shouldCache:
             return experiment.runExperiment()
 
         newFileHash: str = ""
@@ -38,7 +41,7 @@ class ExperimentManager:
         with open(experimentPath, "rb") as file:
             newFileHash = hashlib.md5(file.read()).digest().hex()
 
-        cacheName = f".cache/experiment-{experiment.experimentID}-{newFileHash}"
+        cacheName = "-".join([BASE_CACHE_NAME, experiment.experimentID, newFileHash])
 
         # If the file exists
         if os.path.isfile(cacheName):
@@ -48,6 +51,12 @@ class ExperimentManager:
         else:
             # Run the experiment
             result = experiment.runExperiment()
+
+            # Remove the old cache if it exists
+            for cachedFile in glob.glob(
+                "-".join([BASE_CACHE_NAME, experiment.experimentID, "*"])
+            ):
+                os.remove(cachedFile)
 
             # Save to cache
             result.to_pickle(cacheName)
