@@ -71,6 +71,7 @@ experimentManager = ExperimentManager()
 experimentManager.registerExperiment(
     "experiments.strategies.moving_average.simulate_50_day_moving_average"
 )
+
 experimentManager.registerExperiment(
     "experiments.strategies.crypto.simulate_day_50_moving_average"
 )

@@ -63,11 +63,24 @@ class ExperimentManager:
 
         return result
 
+    def __printSummary(
+        self, experimentStatus: typing.List[typing.Tuple[Experiment, bool]]
+    ):
+        print("-" * 10)
+        print("Experiment summary")
+        for (experiment, status) in experimentStatus:
+            statusIcon = "✅" if status else "❌"
+            print(f"\t{statusIcon} {experiment.experimentID}")
+
     def runAll(self):
+        experimentStatus: typing.List[typing.Tuple[Experiment, bool]] = []
         for (experiment, experimentPath) in self.experiments:
             try:
                 result = self.__cacheWrapper(experiment, experimentPath)
-
+                experimentStatus.append((experiment, True))
             except Exception as error:
                 print(f"Failed to run experiment {experiment.experimentID}")
                 traceback.print_exception(error)
+                experimentStatus.append((experiment, False))
+
+        self.__printSummary(experimentStatus)
