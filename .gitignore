@@ -9,6 +9,9 @@ historical_*/
 raw/
 **/*.sqlite3
 
+# Experiment cache
+.cache/
+
 # Data
 tickers.txt
 .DS_Store

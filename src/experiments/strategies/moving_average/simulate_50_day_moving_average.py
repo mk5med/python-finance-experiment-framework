@@ -5,6 +5,7 @@ import sqlalchemy
 from core.helpers.prettyFromToProfitPrint import printFromToProfit
 
 from core.simulation.MarketSimulation import MarketSimulation
+from experiments.Experiment import Experiment
 from experiments.strategies.moving_average.MovingAverageSimulation import (
     MovingAverageSimulation,
 )
@@ -19,7 +20,7 @@ INITIAL_CAPITAL = 1000
 MOVING_AVERAGE_WINDOW = 50
 
 
-def _runOnTicker(
+def __runOnTicker(
     createConnection: Callable[[], sqlalchemy.engine.Engine], ticker: str
 ) -> MovingAverageSimulation:
     engine = createConnection()
@@ -36,20 +37,11 @@ def _runOnTicker(
 
         return simulationBase
 
-        # Return a summary of the results
-        return pd.Series(
-            data=[
-                ticker,
-                simulationBase.initialCapital,
-                simulationBase.cash,
-                simulationBase.cash - simulationBase.initialCapital,
-                simulationBase.lastAction,
-            ],
-            index=["ticker", "initialCapital", "endCapital", "delta", "lastAction"],
-        )
 
-
-def getTickers(size: int = 50):
+def __getTickers(size: int = 50):
+    """
+    Resolves tickers and restricts the subset
+    """
     tickers = None
     with open("../tickers.txt") as f:
         tickers = json.load(f)
@@ -58,21 +50,39 @@ def getTickers(size: int = 50):
     return tickers
 
 
-def runSimulationOnTickers(
+def __runSimulationOnTickers(
     createConnection: Callable[[], sqlalchemy.engine.Engine], tickers: List[str]
 ):
     result = []
     for ticker in tickers:
-        result.append(partial(_runOnTicker, createConnection)(ticker))
+        result.append(partial(__runOnTicker, createConnection)(ticker))
     return result
 
 
-def start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
-    tickers = getTickers(50)
-    results = runSimulationOnTickers(createConnection, tickers)
+def __start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
+    tickers = __getTickers(5)
+    results = __runSimulationOnTickers(createConnection, tickers)
 
     _r = []
     for index, result in enumerate(results):
         _r.extend(analyseResults(tickers[index], result))
 
     return pd.concat(_r, axis=1).T
+
+
+def __createConnection() -> sqlalchemy.engine.Engine:
+    engine = sqlalchemy.create_engine(
+        f"sqlite+pysqlite:///simulationDB.sqlite3",
+        connect_args={"check_same_thread": False},
+    )
+    return engine
+
+
+experiment = Experiment(
+    experimentID="50-day-moving-average",
+    experimentName="50 Day Moving Average",
+    experimentDescription="",
+)
+
+experiment.setData(__createConnection)
+experiment.setSimulation(__start)

@@ -1,6 +1,8 @@
 import os
 import sys
 
+from experiments.ExperimentManager import ExperimentManager
+
 # Fix dependency resolution when invoking the script directly
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -65,27 +67,14 @@ def seed() -> None:
             result = executor.map(partial(_start, engine), tickers)
 
 
-def run_strategy(
-    strategyName: str,
-    simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame],
-):
-    # Start the timer
-    start = time.time()
-    print(f"{'-' * 5} Simulation: {strategyName} {'-' * 5}")
-    result = simulation(createConnection)
-
-    # End the timer
-    end = time.time()
-    print(f"Duration: {end-start:.03f}s")
-
-    result["strategyName"] = strategyName
-    result["duration"] = end - start
-
-    print(result)
-    return result
+experimentManager = ExperimentManager()
+experimentManager.registerExperiment(
+    "experiments.strategies.moving_average.simulate_50_day_moving_average"
+)
+experimentManager.registerExperiment(
+    "experiments.strategies.crypto.simulate_day_50_moving_average"
+)
 
 
 def run_all_strategies():
-    # run_simulation("Dividend Income", simulate_dividend_income_simulation.start)
-    # simulate_crypto_50_day_moving_average.start(engine)
-    run_strategy("50-day moving average. CAD", simulate_50_day_moving_average.start)
+    experimentManager.runAll()

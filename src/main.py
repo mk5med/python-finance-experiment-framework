@@ -22,7 +22,7 @@ if __name__ == "__main__":
         const=True,
     )
     args = parser.parse_args()
-    print(args)
+
     if args.simulation_seed:
         scripts.strategyInvoker.seed()
     if args.simulations == True:

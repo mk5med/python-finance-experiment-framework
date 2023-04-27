@@ -2,12 +2,17 @@ import pandas as pd
 from typing import Callable
 import sqlalchemy
 import time
-import matplotlib.pyplot as plt
+import hashlib
 
 
-class ExperimentManager:
+class Experiment:
     def __init__(
-        self, *, experimentID=None, experimentName: str, experimentDescription: str
+        self,
+        *,
+        experimentID=None,
+        experimentName: str,
+        experimentDescription: str,
+        shouldCache: bool = True,
     ):
         self.experimentID = experimentID
         self.experimentName = experimentName
@@ -15,17 +20,16 @@ class ExperimentManager:
         self.__layer_data = None
         self.__layer_simulation = None
         self.results = None
+        self.shouldCache = shouldCache
 
-    def setData(self, dataSource: sqlalchemy.engine.Engine) -> "ExperimentManager":
+    def setData(self, dataSource: sqlalchemy.engine.Engine) -> None:
         self.__layer_data = dataSource
-        return self
 
     def setSimulation(
         self,
         simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame],
-    ) -> "ExperimentManager":
+    ) -> None:
         self.__layer_simulation = simulation
-        return self
 
     def runExperiment(self):
         # Start the timer

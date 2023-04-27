@@ -5,7 +5,9 @@ import typing
 class PortfolioTicker:
     def __init__(self, name: str) -> None:
         self.name = name
-        self.transactions = core.lib.ShareGroupTransactionChain.ShareGroupTransactionChain()
+        self.transactions = (
+            core.lib.ShareGroupTransactionChain.ShareGroupTransactionChain()
+        )
 
 
 class Portfolio:

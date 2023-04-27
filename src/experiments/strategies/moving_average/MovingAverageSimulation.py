@@ -2,7 +2,6 @@ from datetime import datetime
 import typing
 from core.lib.ShareGroupTransactionChain import ShareGroupTransactionChain
 from core.lib.tools.movingAverage import MovingAverage
-from functools import partial
 from core.simulation import SimulationState
 import enum
 

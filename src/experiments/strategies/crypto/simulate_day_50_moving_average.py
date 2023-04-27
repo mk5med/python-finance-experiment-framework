@@ -1,8 +1,10 @@
+from typing import Callable
 import sqlalchemy
 from core.lib.ShareGroupTransactionChain import ShareGroupTransactionChain
 from core.lib.tools.movingAverage import MovingAverage
 from core.simulation import SimulationState
 from core.simulation import MarketSimulation
+from experiments.Experiment import Experiment
 
 movingAverage = MovingAverage(10)
 portfolio = ShareGroupTransactionChain()
@@ -73,9 +75,28 @@ def simulate(stopCallback, simulationState: SimulationState, tickers):
         lastAction = 1
 
 
-def start(engine: sqlalchemy.engine.Engine):
+def __createConnection() -> sqlalchemy.engine.Engine:
+    engine = sqlalchemy.create_engine(
+        f"sqlite+pysqlite:///simulationDB.sqlite3",
+        connect_args={"check_same_thread": False},
+    )
+    return engine
+
+
+def __start(connection: Callable[[], sqlalchemy.engine.Engine]):
+    engine = connection()
     with engine.connect() as db:
         simulation = MarketSimulation(db, "2001-01-01", tickers=["BTC-CAD"])
         simulation.setAction(simulate)
         simulation.start()
         print("Status", "${:,.2f}".format(cash))
+
+
+experiment = Experiment(
+    experimentID="crypto-50-day-moving-average",
+    experimentName="50-day moving average in crypto",
+    experimentDescription="An experiment to monitor the performance of the 50 day moving average strategy on crypto assets",
+)
+
+experiment.setData(__createConnection)
+experiment.setSimulation(__start)
