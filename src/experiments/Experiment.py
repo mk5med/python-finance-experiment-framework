@@ -19,6 +19,7 @@ class Experiment:
         self.experimentDescription = experimentDescription
         self.__layer_data = None
         self.__layer_simulation = None
+        self.__layer_visualisation = None
         self.results = None
         self.shouldCache = shouldCache
 
@@ -30,6 +31,9 @@ class Experiment:
         simulation: Callable[[Callable[[], sqlalchemy.engine.Engine]], pd.DataFrame],
     ) -> None:
         self.__layer_simulation = simulation
+
+    def setVisualisation(self, visualisation: Callable[[pd.DataFrame], None]):
+        self.__layer_visualisation = visualisation
 
     def runExperiment(self):
         # Start the timer
@@ -51,3 +55,6 @@ class Experiment:
 
         self.results = result
         return result
+
+    def visualise(self):
+        return self.__layer_visualisation(self.results)

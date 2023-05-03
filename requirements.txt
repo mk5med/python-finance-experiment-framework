@@ -2,7 +2,6 @@ yfinance
 regex
 bs4
 pytest
-plotly
 pandas
 black
 pandas_datareader
@@ -18,3 +17,4 @@ types-psycopg2
 types-beautifulsoup4
 flake8
 matplotlib
+plotly

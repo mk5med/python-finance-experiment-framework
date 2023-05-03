@@ -15,6 +15,10 @@ import pandas as pd
 
 
 def analyseResults(ticker: str, result: MovingAverageSimulation):
+    """
+    Analyse the results of a moving average simulation and create an aggregate final result
+    """
+    
     # How much yield does a 50 day moving average give?
     net_yield = (result.cash) / result.initialCapital
     transactions_length = len(result.portfolio.shareGroupTransactionChain)

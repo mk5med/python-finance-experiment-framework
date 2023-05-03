@@ -7,6 +7,10 @@ import os
 import os.path
 import pandas as pd
 import glob
+from matplotlib import pyplot as plt
+import plotly
+import plotly.express
+import plotly.subplots
 
 BASE_CACHE_NAME = ".cache/experiment"
 
@@ -26,7 +30,8 @@ class ExperimentManager:
         experiment: Experiment = module.experiment
         if experiment.experimentID in self.experimentIds:
             raise Exception(f"Duplicate ID '{experiment.experimentID}'")
-
+        print(experiment.__layer_simulation)
+        raise "ERROR"
         self.experimentIds.add(experiment.experimentID)
         self.experiments.append((experiment, module.__file__))
 
@@ -77,6 +82,19 @@ class ExperimentManager:
         for (experiment, experimentPath) in self.experiments:
             try:
                 result = self.__cacheWrapper(experiment, experimentPath)
+                std = result["profit"].std()
+                result = result[result["profit"] < std]
+
+                fig = plotly.express.line(
+                    result,
+                    x="triggered",
+                    y="profit",
+                    color="ticker",
+                )
+                fig.show()
+
+                # plt.legend(loc='upper right')
+                
                 experimentStatus.append((experiment, True))
             except Exception as error:
                 print(f"Failed to run experiment {experiment.experimentID}")

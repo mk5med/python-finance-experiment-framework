@@ -12,9 +12,9 @@ from sys import argv
 from typing import Callable
 from experiments.strategies.dividend_income import simulate_dividend_income_simulation
 from experiments.strategies.crypto import (
-    simulate_day_50_moving_average as simulate_crypto_50_day_moving_average,
+    simulate_50_day_moving_average_crypto as simulate_crypto_50_day_moving_average,
 )
-from experiments.strategies.moving_average import simulate_50_day_moving_average
+from experiments.strategies.moving_average import experiment_simulate_50_day_moving_average
 import json
 import pandas as pd
 import sqlite3
@@ -72,9 +72,9 @@ experimentManager.registerExperiment(
     "experiments.strategies.moving_average.simulate_50_day_moving_average"
 )
 
-experimentManager.registerExperiment(
-    "experiments.strategies.crypto.simulate_day_50_moving_average"
-)
+# experimentManager.registerExperiment(
+#     "experiments.strategies.crypto.simulate_day_50_moving_average"
+# )
 
 
 def run_all_strategies():

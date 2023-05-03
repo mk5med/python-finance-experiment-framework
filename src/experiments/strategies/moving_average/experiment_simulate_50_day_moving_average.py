@@ -1,5 +1,6 @@
 import json
 from typing import Callable, List
+import typing
 
 import sqlalchemy
 from core.helpers.prettyFromToProfitPrint import printFromToProfit
@@ -23,12 +24,11 @@ MOVING_AVERAGE_WINDOW = 50
 def __runOnTicker(
     createConnection: Callable[[], sqlalchemy.engine.Engine], ticker: str
 ) -> MovingAverageSimulation:
-    engine = createConnection()
-    with engine.connect() as db:
+    with createConnection().connect() as db:
         simulationBase = MovingAverageSimulation(
             movingAverageWindow=MOVING_AVERAGE_WINDOW, initialCapital=INITIAL_CAPITAL
         )
-        simulation = MarketSimulation(db, "2019-01-01", [ticker])
+        simulation = MarketSimulation(db, "2000-01-01", [ticker])
         simulation.setAction(simulationBase.simulate)
         simulation.start()  # Run the simulation
 
@@ -38,7 +38,7 @@ def __runOnTicker(
         return simulationBase
 
 
-def __getTickers(size: int = 50):
+def __getTickers(size: typing.Union[int, None] = 50):
     """
     Resolves tickers and restricts the subset
     """
@@ -54,13 +54,16 @@ def __runSimulationOnTickers(
     createConnection: Callable[[], sqlalchemy.engine.Engine], tickers: List[str]
 ):
     result = []
-    for ticker in tickers:
-        result.append(partial(__runOnTicker, createConnection)(ticker))
+    p = partial(__runOnTicker, createConnection)
+    with ProcessPoolExecutor(max_workers=6) as executor:
+        result = executor.map(p, tickers)
+    # for ticker in tickers:
+    #     result.append(p(ticker))
     return result
 
 
 def __start(createConnection: Callable[[], sqlalchemy.engine.Engine]) -> None:
-    tickers = __getTickers()
+    tickers = __getTickers(None)
     results = __runSimulationOnTickers(createConnection, tickers)
 
     _r = []
