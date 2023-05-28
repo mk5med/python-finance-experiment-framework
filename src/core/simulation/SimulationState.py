@@ -36,7 +36,9 @@ class SimulationState:
         try:
             cursor = self.dbCon
             res = cursor.execute(
-                sqlalchemy.text(f'select * from "{ticker}" where "Date" = \'{datestr}\'')
+                sqlalchemy.text(
+                    f'select * from "{ticker}" where "Date" = \'{datestr}\''
+                )
             )
 
             # index, date, open, high, low, close, adj close, volume
@@ -52,7 +54,9 @@ class SimulationState:
             data: typing.List[str] = []
             for ticker in self._tickers:
                 res = self.dbCon.execute(
-                    sqlalchemy.text(f'select * from "{ticker}" where "Date" = \'{datestr}\'')
+                    sqlalchemy.text(
+                        f'select * from "{ticker}" where "Date" = \'{datestr}\''
+                    )
                 )
                 result = res.fetchone()
                 if result is not None:

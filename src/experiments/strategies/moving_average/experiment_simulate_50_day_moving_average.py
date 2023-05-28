@@ -11,11 +11,14 @@ from experiments.strategies.moving_average.MovingAverageSimulation import (
     MovingAverageSimulation,
 )
 
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 import pandas as pd
 
 from experiments.strategies.moving_average.analyseResults import analyseResults
+import plotly
+import plotly.express
+import plotly.subplots
 
 INITIAL_CAPITAL = 1000
 MOVING_AVERAGE_WINDOW = 50
@@ -81,6 +84,19 @@ def __createConnection() -> sqlalchemy.engine.Engine:
     return engine
 
 
+def visualise(result: pd.DataFrame):
+    std = result["profit"].std()
+    result = result[result["profit"] < std]
+
+    fig = plotly.express.line(
+        result,
+        x="triggered",
+        y="profit",
+        color="ticker",
+    )
+    fig.show()
+
+
 experiment = Experiment(
     experimentID="50-day-moving-average",
     experimentName="50 Day Moving Average",
@@ -89,3 +105,4 @@ experiment = Experiment(
 
 experiment.setData(__createConnection)
 experiment.setSimulation(__start)
+experiment.setVisualisation(visualise)

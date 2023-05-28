@@ -68,7 +68,7 @@ class MovingAverageSimulation:
         (index, date, openPrice, high, low, closePrice, adjClose, volume) = price
         if openPrice is None or closePrice is None:
             return
-            
+
         # Normalize the price for the day
         adjustedPrice: float = (openPrice + closePrice) / 2
         historicalAveragePrice = self.movingAverage.average()

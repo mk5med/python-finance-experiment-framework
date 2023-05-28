@@ -14,7 +14,9 @@ from experiments.strategies.dividend_income import simulate_dividend_income_simu
 from experiments.strategies.crypto import (
     simulate_50_day_moving_average_crypto as simulate_crypto_50_day_moving_average,
 )
-from experiments.strategies.moving_average import experiment_simulate_50_day_moving_average
+from experiments.strategies.moving_average import (
+    experiment_simulate_50_day_moving_average,
+)
 import json
 import pandas as pd
 import sqlite3
@@ -69,7 +71,7 @@ def seed() -> None:
 
 experimentManager = ExperimentManager()
 experimentManager.registerExperiment(
-    "experiments.strategies.moving_average.simulate_50_day_moving_average"
+    "experiments.strategies.moving_average.experiment_simulate_50_day_moving_average"
 )
 
 # experimentManager.registerExperiment(
