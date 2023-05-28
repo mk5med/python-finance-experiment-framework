@@ -101,6 +101,7 @@ experiment = Experiment(
     experimentID="50-day-moving-average",
     experimentName="50 Day Moving Average",
     experimentDescription="",
+    experimentCacheNonce="v1",
 )
 
 experiment.setData(__createConnection)

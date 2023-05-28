@@ -41,13 +41,9 @@ class ExperimentManager:
         if not experiment.shouldCache:
             return experiment.runExperiment()
 
-        newFileHash: str = ""
-
-        # Compute the hash of the experiment file
-        with open(experimentPath, "rb") as file:
-            newFileHash = hashlib.md5(file.read()).digest().hex()
-
-        cacheName = "-".join([BASE_CACHE_NAME, experiment.experimentID, newFileHash])
+        cacheName = "-".join(
+            [BASE_CACHE_NAME, experiment.experimentID, experiment.experimentCacheNonce]
+        )
 
         # If the file exists
         if os.path.isfile(cacheName):

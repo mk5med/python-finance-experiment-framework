@@ -12,9 +12,11 @@ class Experiment:
         experimentID=None,
         experimentName: str,
         experimentDescription: str,
+        experimentCacheNonce: str,
         shouldCache: bool = True,
     ):
         self.experimentID = experimentID
+        self.experimentCacheNonce = experimentCacheNonce
         self.experimentName = experimentName
         self.experimentDescription = experimentDescription
         self.__layer_data = None

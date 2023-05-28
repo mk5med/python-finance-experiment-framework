@@ -96,6 +96,7 @@ experiment = Experiment(
     experimentID="crypto-50-day-moving-average",
     experimentName="50-day moving average in crypto",
     experimentDescription="An experiment to monitor the performance of the 50 day moving average strategy on crypto assets",
+    experimentCacheNonce="v1",
 )
 
 experiment.setData(__createConnection)
