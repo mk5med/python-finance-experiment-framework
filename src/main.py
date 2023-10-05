@@ -1,5 +1,4 @@
 import argparse
-import scripts.strategyInvoker
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -24,6 +23,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.simulation_seed:
+
+        import scripts.strategyInvoker
+
         scripts.strategyInvoker.seed()
     if args.simulations == True:
+
+        import scripts.strategyInvoker
+
         scripts.strategyInvoker.run_all_strategies()
+    else:
+        print("No arguments specified. Use `-h` to see supported arguments")
