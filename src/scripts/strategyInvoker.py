@@ -81,3 +81,4 @@ experimentManager.registerExperiment(
 
 def run_all_strategies():
     experimentManager.runAll()
+    experimentManager.visualiseAll()
