@@ -85,13 +85,25 @@ def __createConnection() -> sqlalchemy.engine.Engine:
 
 
 def visualise(result: pd.DataFrame):
-    std = result["profit"].std()
-    result = result[result["profit"] < std]
+    """
+    Result columns:
+        "ticker",
+        "triggered",
+        "time_held",
+        "buyPrice",
+        "sellPrice",
+        "profit",
+        "instant_yield",
+    """
+
+    std = result["instant_yield"].std()
+    result = result[result["instant_yield"] < std]
+    result = result[".TO" in result["ticker"]]
 
     fig = plotly.express.line(
         result,
         x="triggered",
-        y="profit",
+        y="instant_yield",
         color="ticker",
     )
     fig.show()

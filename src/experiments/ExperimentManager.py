@@ -49,7 +49,9 @@ class ExperimentManager:
         if os.path.isfile(cacheName):
             # Restore the cache
             result = pd.read_pickle(cacheName)
+            experiment.results = result
 
+        # The file does not exist
         else:
             # Run the experiment
             result = experiment.runExperiment()
@@ -76,11 +78,20 @@ class ExperimentManager:
             print(f"\t{statusIcon} {experiment.experimentID}")
 
     def runAll(self):
+        """
+        Run all registered experiments
+        """
+
+        # Store experiment status (failed or complete) in an array
         experimentStatus: typing.List[typing.Tuple[Experiment, bool]] = []
+
+        # Iterate through all experiments
         for (experiment, experimentPath) in self.experiments:
+            # Try running the experiment
             try:
                 result = self.__cacheWrapper(experiment, experimentPath)
                 experimentStatus.append((experiment, True))
+
             except Exception as error:
                 print(f"Failed to run experiment {experiment.experimentID}")
                 traceback.print_exception(error)
