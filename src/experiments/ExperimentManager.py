@@ -92,6 +92,7 @@ class ExperimentManager:
                 result = self.__cacheWrapper(experiment, experimentPath)
                 experimentStatus.append((experiment, True))
 
+            # Log the failed attempt
             except Exception as error:
                 print(f"Failed to run experiment {experiment.experimentID}")
                 traceback.print_exception(error)
