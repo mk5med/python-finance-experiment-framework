@@ -16,4 +16,5 @@ raw/
 tickers.txt
 .DS_Store
 
-notes.md
+# Unpublished documentation
+**/np_*.md
