@@ -23,12 +23,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.simulation_seed:
+        import scripts.seed
 
-        import scripts.strategyInvoker
-
-        scripts.strategyInvoker.seed()
+        scripts.seed.seed("./tickers.txt")
     if args.simulations == True:
-
         import scripts.strategyInvoker
 
         scripts.strategyInvoker.run_all_strategies()
